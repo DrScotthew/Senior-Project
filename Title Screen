@@ -1,0 +1,47 @@
+import os
+
+def display_title_screen():
+    os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
+
+    title = """ 
+   ____              _ _   _       _        ____        _
+  / ___|  __ _ _ __ (_) | | |_   _| |      / ___|  __ _| | _____
+  \___ \ / _` | '_ \| | | | | | | | |     | |  _ / _` | |/ / _ \\
+   ___) | (_| | | | | | | | |_| | | |___  | |_| | (_| |   <  __/
+  |____/ \__,_|_| |_|_|_|  \__,_| |_____|  \____|\__,_|_|\_\___|
+    """ #change this later!!!!!!
+    menu = """
+    1. Start New Game
+    2. Load Saved Game
+    3. Extras
+    4. Exit Game
+    """
+
+    print(title)
+    print(menu)
+
+def main():
+    display_title_screen()
+    
+    while True:
+        choice = input("Make Your Choice (1/2/3/4): ")
+        
+        if choice == '1':
+            # Start a new game (you can replace this with your game logic)
+            print("Starting a new game...")
+            break
+        elif choice == '2':
+            # Load a saved game (you can replace this with your game logic)
+            print("Loading a saved game...")
+            break
+        elif choice == '3':
+            print("Loading Extras...")
+            break
+        elif choice == '4':
+            print("Exiting the game...")
+            break
+        else:
+            print("Invalid choice. Please select a valid option (1/2/3/4).")
+
+if __name__ == "__main__":
+    main()
