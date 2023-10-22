@@ -1,4 +1,9 @@
 import os
+import colorama
+#Colorama is a way to highlight text color in the output console
+from colorama import just_fix_windows_console
+just_fix_windows_console()
+#'Fixes' windows and forces colored text to work
 
 def display_title_screen():
     os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
@@ -13,35 +18,112 @@ def display_title_screen():
     menu = """
     1. Start New Game
     2. Load Saved Game
-    3. Extras
+    3. Settings
     4. Exit Game
     """
 
     print(title)
     print(menu)
 
-def main():
-    display_title_screen()
+def display_new_game_screen():
+    #asks player if they want to enter a custom seed or use a pregenerated random seed for their new game
+    os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
+
+    seed_selection = """
+    Enter a custom seed.  Alternatively, type 'random' for a random seed.  Enter 'exit' to go back to the main menu.
+    """
+
+    print(seed_selection)
+
+def display_settings_screen():
+    #displays all available color choices player can choose from before starting their game
+    color_choice = """ Please choose a color for highlighted items.  (*Note: The default highlight color is Yellow).
     
+    1. Blue
+    2. Yellow
+    3. Purple
+    4. Red
+    5. Green
+
+    Enter 'exit' to go back to the main menu.
+    """
+
+    print(color_choice)
+
+def main():
+    #automatically goes to title screen from main() function
+    main_menu()
+    
+def main_menu():
+    #the title screen
+    display_title_screen()
+
     while True:
         choice = input("Make Your Choice (1/2/3/4): ")
         
         if choice == '1':
-            # Start a new game (you can replace this with your game logic)
-            print("Starting a new game...")
-            break
+            # Allows player to either a) enter a custom seed or b) use a pregenerated random seed in order to create the world and start the game
+            new_game_screen()
+            
         elif choice == '2':
-            # Load a saved game (you can replace this with your game logic)
+            # Loads last saved game
             print("Loading a saved game...")
-            break
+            
         elif choice == '3':
-            print("Loading Extras...")
-            break
+            # Allows player to change different settings (includes: highlight color)
+            settings_screen()
+            
         elif choice == '4':
+            # Exits the game
             print("Exiting the game...")
-            break
+            
         else:
+            # Error control...
             print("Invalid choice. Please select a valid option (1/2/3/4).")
+
+def new_game_screen():
+    display_new_game_screen()
+
+    while True:
+        choice = input()
+
+        if choice == 'random':
+            #Will generate a random seed for the world the player will be in
+            print("Generating random seed...")
+            print("Loading...")
+            
+        elif choice == 'exit':
+            main_menu()
+            
+        else:
+            print("Generating world based on seed given...")
+            print("Loading...")
+            
+def settings_screen():
+    #uses ASCI codes to change colors...
+     display_settings_screen()
+     while True:
+        choice = input("Make your choice: ")
+
+        if choice == '1':
+            print("Highlight color changed to " + "\033[34m" + "Blue")
+
+        elif choice == '2':
+            print("Highlight color changed to " + "\033[33m" + "Yellow")
+
+        elif choice == '3':
+            print("Highlight color changed to " + "\033[35m" + "Purple")
+
+        elif choice == '4':
+            print("Highlight color changed to " + "\033[31m" + "Red")
+            #The '\033[31m' ANSI statement changes the text after it to red
+            #general 'red' color printing code: print('\033[31m' + 'some red text')
+
+        elif choice == '5':
+            print("Highlight color changed to " + "\033[32m" + "Green")
+
+        else:
+            print("Invalid input.  Please choose a highlight color from the list.")
 
 if __name__ == "__main__":
     main()
