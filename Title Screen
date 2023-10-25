@@ -1,3 +1,4 @@
+from http.server import ThreadingHTTPServer
 import os
 import colorama
 #Colorama is a way to highlight text color in the output console
@@ -50,6 +51,8 @@ def display_settings_screen():
 
     print(color_choice)
 
+
+
 def main():
     #automatically goes to title screen from main() function
     main_menu()
@@ -91,6 +94,7 @@ def new_game_screen():
             #Will generate a random seed for the world the player will be in
             print("Generating random seed...")
             print("Loading...")
+            display_random_seed_screen_start()
             
         elif choice == 'exit':
             main_menu()
@@ -98,7 +102,51 @@ def new_game_screen():
         else:
             print("Generating world based on seed given...")
             print("Loading...")
-            
+
+def display_random_seed_screen_start():
+    print("""You are standing in the middle of the woods at night.  There is a full moon overhead casting a faint glow on the ground in front of you.
+      There are trees surrounding you in every direction and span far into the night.  However, there seems to be traces of a path to your right.  It doesn't look to have been walked on in a long time.""")
+
+    while True:
+        choice = input()
+
+        if choice == 'go to the right' or 'go to right' or 'go on path' or 'go along path':
+            display_random_seed_screen_path_start() #displays next set of options...these are set as different def values to help follow where exactly user is...will help for 'path timeline' user story later
+
+        elif choice == 'go to path':
+            print("It's here!")
+
+        else:
+            print("I don't understand that statement.")  #Will need revisions later for 'user error control system' user story...
+
+def display_random_seed_screen_path_start():
+    print("""You walk along the path, careful to not trip on any rocks or limbs along the way.  You eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
+    The middle section of the crossroads is a wide circle with a trash can sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
+
+    while True:
+        choice = input()
+
+        if choice == 'go to trashcan' or 'go to trash can':
+            print("""You are now standing right in front of the trash can.""")
+
+        elif choice == 'look inside trashcan' or 'look inside trash can' or 'look inside the trashcan' or 'look inside the trash can' or 'look inside the trashcan':
+            print("""You look inside the trash can and see there is a single piece of paper at the bottom""")
+
+        elif choice == 'get paper' or 'get the paper' or 'get piece of paper' or 'get the piece of paper' or 'pick up paper' or 'pick up the paper' or 'pick up the piece of paper' or 'pick up piece of paper':
+            print("""You pick up the piece of paper and are able to read it from the light above.  It reads: 
+            Welcome to (INSERT GAME NAME HERE)!  In this game, you will find there are many paths to go on.  There is no right or wrong way to play this game.  While one path might lead to something incredible, another could lead to your demise.
+            Be cautious.  There are several others in this world, but not all will be friendly.  Be prepared for anything.
+            """)
+
+        elif choice == 'go on left path' or 'go down left path':
+            display_random_seed_screen_crossroads_left()
+
+        elif choice == 'go on right path' or 'go down right path':
+            display_random_seed_screen_crossroads_right()
+
+        else:
+            print("I don't understand that statement.")
+
 def settings_screen():
     #uses ASCI codes to change colors...
      display_settings_screen()
@@ -127,3 +175,6 @@ def settings_screen():
 
 if __name__ == "__main__":
     main()
+
+
+#Inventory Control
