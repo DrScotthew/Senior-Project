@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Inventory Version 1", "Inventory Version 1.pyproj", "{4234E844-2E0F-4610-A399-6CC7DECEB1C4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4234E844-2E0F-4610-A399-6CC7DECEB1C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4234E844-2E0F-4610-A399-6CC7DECEB1C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {85F1DDC6-EB32-4F09-868B-ED04769E7F07}
+	EndGlobalSection
+EndGlobal
