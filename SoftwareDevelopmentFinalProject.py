@@ -1,5 +1,6 @@
 from http.server import ThreadingHTTPServer
 import os
+from InventoryVersion1 import Inventory_Version_1 #import inventory management
 import colorama
 #Colorama is a way to highlight text color in the output console
 from colorama import just_fix_windows_console
@@ -50,7 +51,6 @@ def display_settings_screen():
     """
 
     print(color_choice)
-
 
 
 def main():
@@ -111,7 +111,7 @@ def display_random_seed_screen_start():
         choice = input()
 
         if choice == 'go to the right' or 'go to right' or 'go on path' or 'go along path':
-            display_random_seed_screen_path_start() #displays next set of options...these are set as different def values to help follow where exactly user is...will help for 'path timeline' user story later
+            display_random_seed_path_start() #displays next set of options...these are set as different def values to help follow where exactly user is...will help for 'path timeline' user story later
 
         elif choice == 'go to path':
             print("It's here!")
@@ -119,7 +119,7 @@ def display_random_seed_screen_start():
         else:
             print("I don't understand that statement.")  #Will need revisions later for 'user error control system' user story...
 
-def display_random_seed_screen_path_start():
+def display_random_seed_path_start():
     print("""You walk along the path, careful to not trip on any rocks or limbs along the way.  You eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
     The middle section of the crossroads is a wide circle with a trash can sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
 
@@ -139,13 +139,92 @@ def display_random_seed_screen_path_start():
             """)
 
         elif choice == 'go on left path' or 'go down left path':
-            display_random_seed_screen_crossroads_left()
+            display_random_seed_crossroads_left()
 
         elif choice == 'go on right path' or 'go down right path':
-            display_random_seed_screen_crossroads_right()
+            display_random_seed_crossroads_right()
+
+        elif choice == 'go forward' or 'go down same path' or 'go on same path' or 'continue on same path' or 'continue down same path':
+            display_random_seed_crossroads_forward()
 
         else:
             print("I don't understand that statement.")
+
+def display_random_seed_crossroads_left():
+    print("""You go down the path to your left, leaving the crossroads behind you.  Eventually, the light from the crossroads becomes faint.  The path in front of you is almost invisible from the pitch black darkness all around.
+    Suddenly, a growling sound can be heard from in front of you, though you cannot see what is making the sound.""")
+       
+    while True:
+        choice = input()
+
+        if choice == 'keep going forward' or 'go forward' or 'continue forward' or 'keep going':
+            display_random_seed_crossroads_left_wolf()
+
+        elif choice == 'turn around' or 'turn back':
+            print("You are turned around with the growling still menacingly continuing behind you.")
+
+        elif choice == 'go back to crossroads' or 'go to crossroads' or 'return to crossroads':
+            print("""You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
+            display_random_seed_path_start()
+
+        elif choice == 'fight' or 'attack' or 'kill':
+            print("What do you want to fight with?")
+            #add option to user for accessing inventory to attack...
+            #print("Items in your inventory: ")
+            #player_inventory.list_items()
+
+        else:
+            print("I don't understand that statement.")
+     
+
+def display_random_seed_crossroads_left_wolf():
+    print("""You slowly move forward towards the growling which has gotten significantly louder and more menacing now.  After a few steps, you can start to make out what seems to be a wolf-like creature in the dark.
+            Glowing yellow eyes are faint, but seem to be staring right into your soul.  The creature's growling starts to hurt your ears as it increases in volume.""")
+
+    while True:
+        choice = input()
+
+        if choice == 'keep going forward' or 'go forward' or 'continue forward' or 'keep going':
+            display_random_seed_crossroads_left_wolf2()
+
+        elif choice == 'turn around' or 'turn back':
+            print("You are turned around with the growling still menacingly continuing behind you.")
+
+        elif choice == 'go back to crossroads' or 'go to crossroads' or 'return to crossroads':
+            print("""You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
+            display_random_seed_path_start()
+
+        elif choice == 'fight' or 'attack' or 'kill':
+            print("What do you want to fight with?")
+
+        else:
+            print("I don't understand that statement.")
+
+def display_random_seed_crossroads_left_wolf2():
+    print("""You continue to move forward towards the creature still growling.  You only get three steps further before the creature suddenly lunges forward at you.  Fangs sink down into your right arm as the creature bites down hard.
+    Seeing it clearly, you now know it is a large black wolf.  The pain causes you to scream out in pain.  Blood is now all over your arm and falling to the forest floor.  The wolf continues to hold his grip on your arm and shows no signs
+    of letting go.""")
+
+    while True:
+        choice = input()
+
+        if choice == 'attack' or 'fight' or 'attack the wolf' or 'fight the wolf':
+            display_random_seed_crossroads_left_wolf_attack()
+
+        elif choice == 'run away' or 'run' or 'leave':
+            print("You try to get away from the wolf, but it is futile.  It continues to bite down even harder than before.  More blood continues to pool around its mouth")
+
+        else:
+            print("I don't understand that statement.")
+
+def display_random_seed_crossroads_left_wolf_attack():
+    print("What do you want to attack the wolf with?")
+
+    while True:
+        choice = input()
+
+        #incorporate inventory management and options...list any available weapons
+
 
 def settings_screen():
     #uses ASCI codes to change colors...
