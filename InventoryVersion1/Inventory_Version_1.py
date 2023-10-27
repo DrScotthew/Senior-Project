@@ -17,7 +17,7 @@ class Inventory:
         for i, item in enumerate(self.items, start=1):
             print(f"{i},{item.name}: {item.description}")
             
-def main():
+def main1():
     player_inventory = Inventory()
     
     while True: 

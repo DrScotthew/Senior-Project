@@ -112,7 +112,7 @@ def display_random_seed_screen_start():
 
         if choice == 'go to the right' or 'go to right' or 'go on path' or 'go along path':
             display_random_seed_path_start() #displays next set of options...these are set as different def values to help follow where exactly user is...will help for 'path timeline' user story later
-
+            
         elif choice == 'go to path':
             print("It's here!")
 
@@ -120,7 +120,44 @@ def display_random_seed_screen_start():
             print("I don't understand that statement.")  #Will need revisions later for 'user error control system' user story...
 
 def display_random_seed_path_start():
-    print("""You walk along the path, careful to not trip on any rocks or limbs along the way.  You eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
+    print("""You walk along the path, careful to not trip on any rocks or limbs along the way.  You don't get very far before seeing an object lying on the ground, shining from the moonlight filtering through the trees.
+    You can't make out exactly what it is, though.""")
+
+    while True:
+        choice = input()
+
+        if choice == 'pick up object' or 'look at object':
+            display_random_seed_screen_path_object()
+
+        elif choice == 'go to object':
+            print("It's here!")
+
+        else:
+            print("I don't understand that statement.")
+
+def display_random_seed_screen_path_object():
+    print("""You pick up the object and notice that it is a small dagger.  The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.""")
+
+    while True:
+        choice = input()
+
+        if choice == 'keep blade' or 'keep dagger' or 'keep knife' or 'take dagger' or 'take knife' or 'take blade':
+            print("You take the knife and hold it tightly in your hand.")
+            #add item to inventory for player to use later...
+            #player_inventory.add_item(item)
+            #self.name = 'Rusted Dagger'
+            #self.items.append('Rusted Dagger')
+            #self.description = "A small rusted dagger.  It doesn't look like it will do much damage, but might be helpful if cornered."
+
+        elif choice == 'leave blade' or 'leave dagger' or 'leave knife' or 'drop knife' or 'drop dagger' or 'drop blade':
+            print("You put the object back on the ground.")
+
+        elif choice == 'go down path' or 'continue' or 'go along path' or 'continue down path' or 'continue on path':
+            display_random_seed_path_start1()
+
+
+def display_random_seed_path_start1():
+    print("""You continue to go along the path and eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
     The middle section of the crossroads is a wide circle with a trash can sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
 
     while True:
@@ -196,6 +233,9 @@ def display_random_seed_crossroads_left_wolf():
 
         elif choice == 'fight' or 'attack' or 'kill':
             print("What do you want to fight with?")
+            #add option to user for accessing inventory to attack...
+            #print("Items in your inventory: ")
+            #player_inventory.list_items()
 
         else:
             print("I don't understand that statement.")
