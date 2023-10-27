@@ -4,7 +4,7 @@ Description : This is an ai-generated text-based game that is in development.  I
 Different things the player has available to them will also be randomly generated, including, but not limited to, weapons, objects, enemies, paths, dialogue, and endings.  The plan for the end project is to have a fully functional text-based game that allows for randomly generated content for unique playthroughs.
 This project is being developed using Python due to the vast libraries available and a want to learn another programming language as practice.  Python 3 is used.  All coding will be done through Visual Studio.
 
-Credits : In this project, [Colorama](https://pypi.org/project/colorama/) ver 0.4.6 is utilized in order to enable the wanted highlighted items options in the console window in which the game will be played through.
+Credits : In this project, [Colorama](https://github.com/tartley/colorama) ver 0.4.6 is utilized in order to enable the wanted highlighted items options in the console window in which the game will be played through.
 
 'Team Name' : Pickin' Some Jims
 
