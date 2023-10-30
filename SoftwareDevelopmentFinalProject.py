@@ -1,6 +1,9 @@
+from ast import While
+from cgitb import lookup
 from http.server import ThreadingHTTPServer
 import os
-from InventoryVersion1 import Inventory_Version_1 #import inventory management
+import string
+from InventoryVersion1 import Inventory_Version_1 #import inventory management inventory_version_1.py
 import colorama
 #Colorama is a way to highlight text color in the output console
 from colorama import just_fix_windows_console
@@ -16,7 +19,7 @@ def display_title_screen():
   \___ \ / _` | '_ \| | | | | | | | |     | |  _ / _` | |/ / _ \\
    ___) | (_| | | | | | | | |_| | | |___  | |_| | (_| |   <  __/
   |____/ \__,_|_| |_|_|_|  \__,_| |_____|  \____|\__,_|_|\_\___|
-    """ #change this later!!!!!!
+    """ #change this later!!!!!!  placeholder name
     menu = """
     1. Start New Game
     2. Load Saved Game
@@ -90,7 +93,7 @@ def new_game_screen():
     while True:
         choice = input()
 
-        if choice == 'random':
+        if choice == 'random': #for demo playthrough
             #Will generate a random seed for the world the player will be in
             print("Generating random seed...")
             print("Loading...")
@@ -107,59 +110,61 @@ def display_random_seed_screen_start():
     print("""You are standing in the middle of the woods at night.  There is a full moon overhead casting a faint glow on the ground in front of you.
       There are trees surrounding you in every direction and span far into the night.  However, there seems to be traces of a path to your right.  It doesn't look to have been walked on in a long time.""")
 
-    while True:
-        choice = input()
-
-        if choice == 'go to the right' or 'go to right' or 'go on path' or 'go along path':
-            display_random_seed_path_start() #displays next set of options...these are set as different def values to help follow where exactly user is...will help for 'path timeline' user story later
-            
-        elif choice == 'go to path':
-            print("It's here!")
-
+    while True:     #Loop continuously
+        choice = input()   #Get the input
+        if choice in ("go on path", "go along path"):    #Correct responses...
+            display_random_seed_path_start()       #...break the loop
         else:
-            print("I don't understand that statement.")  #Will need revisions later for 'user error control system' user story...
-
+            print('I do not understand that statement.')    #error
+            
 def display_random_seed_path_start():
     print("""You walk along the path, careful to not trip on any rocks or limbs along the way.  You don't get very far before seeing an object lying on the ground, shining from the moonlight filtering through the trees.
     You can't make out exactly what it is, though.""")
 
     while True:
         choice = input()
-
-        if choice == 'pick up object' or 'look at object':
-            display_random_seed_screen_path_object()
-
-        elif choice == 'go to object':
-            print("It's here!")
-
+        if choice in ("pick up object", "pick up the object", "look at object", "look at the object"):
+            display_random_seed_screen_path_object()   
         else:
-            print("I don't understand that statement.")
+            print('I do not understand that statement.') 
 
 def display_random_seed_screen_path_object():
-    print("""You pick up the object and notice that it is a small dagger.  The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.""")
+    print("You pick up the object and notice that it is a " + "\033[33m" + "small dagger.")
+    print("\033[39m" + "The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.")
 
     while True:
         choice = input()
 
         if choice == 'keep blade' or 'keep dagger' or 'keep knife' or 'take dagger' or 'take knife' or 'take blade':
-            print("You take the knife and hold it tightly in your hand.")
+            print("You take the " + "\033[33m" +  "small dagger" + "\033[39m" + " and hold it tightly in your hand.")  #ANSI codes implemented...change to yellow then back to white
             #add item to inventory for player to use later...
             #player_inventory.add_item(item)
             #self.name = 'Rusted Dagger'
             #self.items.append('Rusted Dagger')
             #self.description = "A small rusted dagger.  It doesn't look like it will do much damage, but might be helpful if cornered."
+            display_random_seed_screen_path_object_continue()
 
         elif choice == 'leave blade' or 'leave dagger' or 'leave knife' or 'drop knife' or 'drop dagger' or 'drop blade':
-            print("You put the object back on the ground.")
+            print("You put the " + "\033[33m" +  "small dagger" + "\033[39m" + " back on the ground.")
+            display_random_seed_screen_path_object_continue()
 
         elif choice == 'go down path' or 'continue' or 'go along path' or 'continue down path' or 'continue on path':
             display_random_seed_path_start1()
 
+def display_random_seed_screen_path_object_continue():
+     print("You look around and see that the path still continues in front of you.  No other path is in sight and trees surround you.  The moonlight still filters through shining a faint light on the path ahead.")
+
+     while True:     
+        choice = input() 
+        if choice in ("go down path", "continue", "go along path", "continue down path", "continue on path"):   
+            display_random_seed_path_start1      
+        else:
+            print('I do not understand that statement.')
 
 def display_random_seed_path_start1():
     print("""You continue to go along the path and eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
     The middle section of the crossroads is a wide circle with a trash can sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
-
+    
     while True:
         choice = input()
 
@@ -167,16 +172,16 @@ def display_random_seed_path_start1():
             print("""You are now standing right in front of the trash can.""")
 
         elif choice == 'look inside trashcan' or 'look inside trash can' or 'look inside the trashcan' or 'look inside the trash can' or 'look inside the trashcan':
-            print("""You look inside the trash can and see there is a single piece of paper at the bottom""")
+            print("You look inside the trash can and see there is a single " + "\033[33m" +  "piece of paper" + "\033[39m" + "  at the bottom")
 
         elif choice == 'get paper' or 'get the paper' or 'get piece of paper' or 'get the piece of paper' or 'pick up paper' or 'pick up the paper' or 'pick up the piece of paper' or 'pick up piece of paper':
-            print("""You pick up the piece of paper and are able to read it from the light above.  It reads: 
-            Welcome to (INSERT GAME NAME HERE)!  In this game, you will find there are many paths to go on.  There is no right or wrong way to play this game.  While one path might lead to something incredible, another could lead to your demise.
-            Be cautious.  There are several others in this world, but not all will be friendly.  Be prepared for anything.
-            """)
+            print("You pick up the " + "\033[33m" +  "piece of paper" + "\033[39m" + " and are able to read it from the light above." + 
+                  """It reads: 
+                        Welcome to (INSERT GAME NAME HERE)!  In this game, you will find there are many paths to go on.  There is no right or wrong way to play this game.  While one path might lead to something incredible, 
+                        another could lead to your demise.  Be cautious.  There are several others in this world, but not all will be friendly.  Be prepared for anything.""")
 
         elif choice == 'go on left path' or 'go down left path':
-            display_random_seed_crossroads_left()
+            display_random_seed_crossroads_left() #demo 1 playthrough...code others in phase 2
 
         elif choice == 'go on right path' or 'go down right path':
             display_random_seed_crossroads_right()
