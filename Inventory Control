@@ -1,0 +1,41 @@
+#Inventory Control
+class Player: 
+    def __init__ (self, name):
+        self.name = name
+        self.has_knife = False 
+
+    def pick_up_knife(self):
+        print(f"{self.name} takes the knife. Good idea.")
+        self.has_knife = True 
+class Wolf: 
+    def __init__(self):
+        self.healthbar = 100
+    def attack(self, player): 
+        print("The big, black wolf charges.")
+        if player.has_knife: 
+            print(f"{player.name} uses the knife to strike back!")
+            self.health -= 30
+        else: 
+            print("f{player.name} possesses no defense mechanism against the wolf. They should have taken the knife known as Stabitha.")
+            self.health -= 10
+
+
+#Player and The Big Bad Wolf 
+player_name = "Turg" #Character
+Turg = Player(player_name)
+wolf = Wolf()
+
+#The player starts off without a knife.
+print(f"{Turg.name}has picked up Stabitha: {Turg.has_knife}")
+
+
+#Player picks up the knife. 
+Turg.pick_up_knife()
+
+#Wolf strikes at the player
+wolf.attack(Turg)
+print(f"The wolf's health is at {wolf.healthbar}")
+
+#Player defends themself with the knife 
+wolf.attack(Turg)
+print(f"The Wolf's health is at: {wolf.healthbar}")
