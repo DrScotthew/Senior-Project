@@ -131,7 +131,50 @@ def display_random_seed_path_start():
 def display_random_seed_screen_path_object():
     print("You pick up the object and notice that it is a " + "\033[33m" + "small dagger.")
     print("\033[39m" + "The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.")
+    class Player: 
+        def __int__(self): 
+            self.inventory = []
 
+    def add_item(self, item):
+        self.inventory.append(item)
+        print(f"You have added {item} to your inventory.")
+    def remove_item(self, item):
+        if item in self.inventory:
+            self.inventory.remove(item)
+            print(f"You have removed {item} from your inventory")
+        else: 
+            print(f"You do not have anything in your inventory")
+    def check_inventory(self):
+        if not self.inventory:
+            print("Your inventory is currently empty/")
+        else:
+            print("Here is your inventory: ")
+            for item in self.inventory:
+                print(item)
+
+#Calling Inventory
+if __name__ == "__main__":
+    Turg = Player() #Turg is player name. 
+
+    while True: 
+        print("\n1) Add an item to your inventory.")
+        print("2) Remove an item from your inventory.")
+        print("3. To check inventory, type 'inventory' or 'i'.")
+        print("4. Exit")
+
+        choice = input("Please type your choice: ")
+        if choice == "1":
+            item = input("What item do you want to add? ")
+            Turg.add_item(item)
+        elif choice == "2":
+            item = input("What item do you want to remove? ")
+            Turg.remove_item(item)
+        elif choice.lower() in ["3", "inventory", "i"]:
+            Turg.check_inventory()
+        elif choice == "4":
+            break 
+        else: 
+            print("Your input is invalid. Please try again.")
     while True:
         choice = input()
 
@@ -150,7 +193,94 @@ def display_random_seed_screen_path_object():
 
         elif choice == 'go down path' or 'continue' or 'go along path' or 'continue down path' or 'continue on path':
             display_random_seed_path_start1()
+class Player: 
+    def __int__(self): 
+        self.inventory = []
 
+    def add_item(self, item)
+        self.inventory.append(item)
+        print(f"You have added {item} to your inventory.")
+    def remove_item(self, item):
+        if item in self.inventory:
+            self.inventory.remove(item)
+            print(f"You have removed {item} from your inventory")
+        else: 
+            print(f"You do not have anything in your inventory")
+    def check_inventory(self):
+        if not self.inventory:
+            print("Your inventory is currently empty/")
+        else:
+            print("Here is your inventory: ")
+            for item in self.inventory:
+                print(item)
+
+#Calling Inventory
+if __name__ == "__main__":
+    Turg = Player() #Turg is player name. 
+
+    while True: 
+        print("\n1) Add an item to your inventory.")
+        print("2) Remove an item from your inventory.")
+        print("3. To check inventory, type 'inventory' or 'i'.")
+        print("4. Exit")
+
+        choice = input("Please type your choice: ")
+        if choice == "1":
+            item = input("What item do you want to add? ")
+            Turg.add_item(item)
+        elif choice == "2":
+            item = input("What item do you want to remove? ")
+            Turg.remove_item(item)
+        elif choice.lower() in ["3", "inventory", "i"]:
+            Turg.check_inventory()
+        elif choice == "4":
+            break 
+        else: 
+            print("Your input is invalid. Please try again.")
+class Player: 
+    def __int__(self): 
+        self.inventory = []
+
+    def add_item(self, item)
+        self.inventory.append(item)
+        print(f"You have added {item} to your inventory.")
+    def remove_item(self, item):
+        if item in self.inventory:
+            self.inventory.remove(item)
+            print(f"You have removed {item} from your inventory")
+        else: 
+            print(f"You do not have anything in your inventory")
+            def check_inventory(self):
+                if not self.inventory:
+                 print("Your inventory is currently empty/")
+                else:
+                    print("Here is your inventory: ")
+            for item in self.inventory:
+                print(item)
+
+#Calling Inventory
+if __name__ == "__main__":
+    Turg = Player() #Turg is player name. 
+
+    while True: 
+        print("\n1) Add an item to your inventory.")
+        print("2) Remove an item from your inventory.")
+        print("3. To check inventory, type 'inventory' or 'i'.")
+        print("4. Exit")
+
+        choice = input("Please type your choice: ")
+        if choice == "1":
+            item = input("What item do you want to add? ")
+            Turg.add_item(item)
+        elif choice == "2":
+            item = input("What item do you want to remove? ")
+            Turg.remove_item(item)
+        elif choice.lower() in ["3", "inventory", "i"]:
+            Turg.check_inventory()
+        elif choice == "4":
+            break 
+        else: 
+            print("Your input is invalid. Please try again.")
 def display_random_seed_screen_path_object_continue():
      print("You look around and see that the path still continues in front of you.  No other path is in sight and trees surround you.  The moonlight still filters through shining a faint light on the path ahead.")
 
@@ -160,7 +290,50 @@ def display_random_seed_screen_path_object_continue():
             display_random_seed_path_start1      
         else:
             print('I do not understand that statement.')
+class Player: 
+    def __int__(self): 
+        self.inventory = []
 
+    def add_item(self, item):
+        self.inventory.append(item)
+        print(f"You have added {item} to your inventory.")
+    def remove_item(self, item):
+        if item in self.inventory:
+            self.inventory.remove(item)
+            print(f"You have removed {item} from your inventory")
+        else: 
+            print(f"You do not have anything in your inventory")
+    def check_inventory(self):
+        if not self.inventory:
+            print("Your inventory is currently empty/")
+        else:
+            print("Here is your inventory: ")
+            for item in self.inventory:
+                print(item)
+
+#Calling Inventory
+if __name__ == "__main__":
+    Turg = Player() #Turg is player name. 
+
+    while True: 
+        print("\n1) Add an item to your inventory.")
+        print("2) Remove an item from your inventory.")
+        print("3. To check inventory, type 'inventory' or 'i'.")
+        print("4. Exit")
+
+        choice = input("Please type your choice: ")
+        if choice == "1":
+            item = input("What item do you want to add? ")
+            Turg.add_item(item)
+        elif choice == "2":
+            item = input("What item do you want to remove? ")
+            Turg.remove_item(item)
+        elif choice.lower() in ["3", "inventory", "i"]:
+            Turg.check_inventory()
+        elif choice == "4":
+            break 
+        else: 
+            print("Your input is invalid. Please try again.")
 def display_random_seed_path_start1():
     print("""You continue to go along the path and eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
     The middle section of the crossroads is a wide circle with a trash can sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
