@@ -64,11 +64,11 @@ def main():
     choice = input()
     if choice == 'exit game':
         print("Saving the game...")
-    checkpoints = [start, display_random_seed_path_start, display_random_seed_screen_path_object]
+    checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
 
 def load_game():
     #this allows for the player to load their game from a save file
-    checkpoints = [start, display_random_seed_path_start, display_random_seed_screen_path_object, display_random_seed_screen_path_object_continue, display_random_seed_path_start1]
+    checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
     #checkpoints are defined as places in the story or 'timeline' for the player to access...
     #this allows for the game to always know where the player is in the story
     try:
@@ -131,7 +131,7 @@ def start():
     while True:     #Loop continuously
         choice = input()   #Get the input
         if choice in ("go on path", "go along path"):    #Correct responses...
-            display_random_seed_path_start()       #...break the loop
+            startpath()       #...break the loop
         elif choice == 'exit game':
             saved_checkpoint = int(open("save.txt").read())   #Saves the gamestate
             open("save.txt", 'w').write('0')   #Assigns the save file a value of '0' for checkpoint list (i.e. start() is first in list so its value is 0)
@@ -139,14 +139,14 @@ def start():
         else:
             print('I do not understand that statement.')    #error
             
-def display_random_seed_path_start():
+def startpath():
     print("""You walk along the path, careful to not trip on any rocks or limbs along the way.  You don't get very far before seeing an object lying on the ground, shining from the moonlight filtering through the trees.
     You can't make out exactly what it is, though.""")
 
     while True:
         choice = input()
         if choice in ("pick up object", "pick up the object", "look at object", "look at the object"):
-            display_random_seed_screen_path_object()
+            startpath_object()
         elif choice == 'exit game':
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('1')   #Assigns the save file a value of '1' for display_random_seed_path_start() gamestate
@@ -154,7 +154,7 @@ def display_random_seed_path_start():
         else:
             print('I do not understand that statement.') 
 
-def display_random_seed_screen_path_object():
+def startpath_object():
     print("You pick up the object and notice that it is a " + "\033[33m" + "small dagger.")
     print("\033[39m" + "The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.")
 
@@ -168,12 +168,12 @@ def display_random_seed_screen_path_object():
             #self.name = 'Rusted Dagger'
             #self.items.append('Rusted Dagger')
             #self.description = "A small rusted dagger.  It doesn't look like it will do much damage, but might be helpful if cornered."
-            display_random_seed_screen_path_object_continue()
+            startpath_continue()
         elif choice == 'leave blade' or 'leave dagger' or 'leave knife' or 'drop knife' or 'drop dagger' or 'drop blade':
             print("You put the " + "\033[33m" +  "small dagger" + "\033[39m" + " back on the ground.")
-            display_random_seed_screen_path_object_continue()
+            startpath_continue()
         elif choice == 'go down path' or 'continue' or 'go along path' or 'continue down path' or 'continue on path':
-            display_random_seed_path_start1()
+            startpath_continue()
         elif choice == 'exit game':
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('2')
@@ -181,13 +181,13 @@ def display_random_seed_screen_path_object():
         else:
             print("I don't understand that statement.")
 
-def display_random_seed_screen_path_object_continue():
+def startpath_continue():
      print("You look around and see that the path still continues in front of you.  No other path is in sight and trees surround you.  The moonlight still filters through shining a faint light on the path ahead.")
 
      while True:     
         choice = input() 
         if choice in ("go down path", "continue", "go along path", "continue down path", "continue on path"):   
-            display_random_seed_path_start1
+            crossroads()
         elif choice == 'exit game':
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('3')
@@ -195,7 +195,7 @@ def display_random_seed_screen_path_object_continue():
         else:
             print('I do not understand that statement.')
 
-def display_random_seed_path_start1():
+def crossroads():
     print("""You continue to go along the path and eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
     The middle section of the crossroads is a wide circle with a trash can sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
     
@@ -212,7 +212,7 @@ def display_random_seed_path_start1():
                         Welcome to (INSERT GAME NAME HERE)!  In this game, you will find there are many paths to go on.  There is no right or wrong way to play this game.  While one path might lead to something incredible, 
                         another could lead to your demise.  Be cautious.  There are several others in this world, but not all will be friendly.  Be prepared for anything.""")
         elif choice == 'go on left path' or 'go down left path':
-            display_random_seed_crossroads_left() #demo 1 playthrough...code others in phase 2
+            crossroads_left() #demo 1 playthrough...code others in phase 2
         elif choice == 'go on right path' or 'go down right path':
             display_random_seed_crossroads_right()
         elif choice == 'go forward' or 'go down same path' or 'go on same path' or 'continue on same path' or 'continue down same path':
@@ -224,7 +224,7 @@ def display_random_seed_path_start1():
         else:
             print("I don't understand that statement.")
 
-def display_random_seed_crossroads_left():
+def crossroads_left():
     print("""You go down the path to your left, leaving the crossroads behind you.  Eventually, the light from the crossroads becomes faint.  The path in front of you is almost invisible from the pitch black darkness all around.
     Suddenly, a growling sound can be heard from in front of you, though you cannot see what is making the sound.""")
        
@@ -232,12 +232,12 @@ def display_random_seed_crossroads_left():
         choice = input()
 
         if choice == 'keep going forward' or 'go forward' or 'continue forward' or 'keep going':
-            display_random_seed_crossroads_left_wolf()
+            crossroads_left1()
         elif choice == 'turn around' or 'turn back':
             print("You are turned around with the growling still menacingly continuing behind you.")
         elif choice == 'go back to crossroads' or 'go to crossroads' or 'return to crossroads':
             print("""You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
-            display_random_seed_path_start()
+            crossroads()
         elif choice == 'fight' or 'attack' or 'kill':
             print("What do you want to fight with?")
             #add option to user for accessing inventory to attack...
@@ -251,7 +251,7 @@ def display_random_seed_crossroads_left():
             print("I don't understand that statement.")
      
 
-def display_random_seed_crossroads_left_wolf():
+def crossroads_left1():
     print("""You slowly move forward towards the growling which has gotten significantly louder and more menacing now.  After a few steps, you can start to make out what seems to be a wolf-like creature in the dark.
             Glowing yellow eyes are faint, but seem to be staring right into your soul.  The creature's growling starts to hurt your ears as it increases in volume.""")
 
@@ -259,7 +259,7 @@ def display_random_seed_crossroads_left_wolf():
         choice = input()
 
         if choice == 'keep going forward' or 'go forward' or 'continue forward' or 'keep going':
-            display_random_seed_crossroads_left_wolf2()
+            crossroads_left2()
         elif choice == 'turn around' or 'turn back':
             print("You are turned around with the growling still menacingly continuing behind you.")
         elif choice == 'go back to crossroads' or 'go to crossroads' or 'return to crossroads':
@@ -277,7 +277,7 @@ def display_random_seed_crossroads_left_wolf():
         else:
             print("I don't understand that statement.")
 
-def display_random_seed_crossroads_left_wolf2():
+def crossroads_left2():
     print("""You continue to move forward towards the creature still growling.  You only get three steps further before the creature suddenly lunges forward at you.  Fangs sink down into your right arm as the creature bites down hard.
     Seeing it clearly, you now know it is a large black wolf.  The pain causes you to scream out in pain.  Blood is now all over your arm and falling to the forest floor.  The wolf continues to hold his grip on your arm and shows no signs
     of letting go.""")
@@ -286,7 +286,7 @@ def display_random_seed_crossroads_left_wolf2():
         choice = input()
 
         if choice == 'attack' or 'fight' or 'attack the wolf' or 'fight the wolf':
-            display_random_seed_crossroads_left_wolf_attack()
+            crossroads_left3()
         elif choice == 'run away' or 'run' or 'leave':
             print("You try to get away from the wolf, but it is futile.  It continues to bite down even harder than before.  More blood continues to pool around its mouth")
         elif choice == 'exit game':
@@ -296,7 +296,7 @@ def display_random_seed_crossroads_left_wolf2():
         else:
             print("I don't understand that statement.")
 
-def display_random_seed_crossroads_left_wolf_attack():
+def crossroads_left3():
     print("What do you want to attack the wolf with?")
 
     while True:
