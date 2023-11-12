@@ -9,6 +9,7 @@ import colorama
 from colorama import just_fix_windows_console
 just_fix_windows_console()
 #'Fixes' windows and forces colored text to work
+import pickle
 
 def display_title_screen():
     os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
@@ -59,6 +60,22 @@ def display_settings_screen():
 def main():
     #automatically goes to title screen from main() function
     main_menu()
+
+    choice = input()
+    if choice == 'exit game':
+        print("Saving the game...")
+    checkpoints = [start, display_random_seed_path_start, display_random_seed_screen_path_object]
+
+def load_game():
+    #this allows for the player to load their game from a save file
+    checkpoints = [start, display_random_seed_path_start, display_random_seed_screen_path_object, display_random_seed_screen_path_object_continue, display_random_seed_path_start1]
+    #checkpoints are defined as places in the story or 'timeline' for the player to access...
+    #this allows for the game to always know where the player is in the story
+    try:
+        saved_checkpoint = int(open("save.txt").read())
+        checkpoints[saved_checkpoint]()
+    except FileNotFoundError:
+        start()
     
 def main_menu():
     #the title screen
@@ -74,7 +91,8 @@ def main_menu():
         elif choice == '2':
             # Loads last saved game
             print("Loading a saved game...")
-            
+            load_game()
+
         elif choice == '3':
             # Allows player to change different settings (includes: highlight color)
             settings_screen()
@@ -97,7 +115,7 @@ def new_game_screen():
             #Will generate a random seed for the world the player will be in
             print("Generating random seed...")
             print("Loading...")
-            display_random_seed_screen_start()
+            start()
             
         elif choice == 'exit':
             main_menu()
@@ -106,7 +124,7 @@ def new_game_screen():
             print("Generating world based on seed given...")
             print("Loading...")
 
-def display_random_seed_screen_start():
+def start():
     print("""You are standing in the middle of the woods at night.  There is a full moon overhead casting a faint glow on the ground in front of you.
       There are trees surrounding you in every direction and span far into the night.  However, there seems to be traces of a path to your right.  It doesn't look to have been walked on in a long time.""")
 
@@ -114,6 +132,10 @@ def display_random_seed_screen_start():
         choice = input()   #Get the input
         if choice in ("go on path", "go along path"):    #Correct responses...
             display_random_seed_path_start()       #...break the loop
+        elif choice == 'exit game':
+            saved_checkpoint = int(open("save.txt").read())   #Saves the gamestate
+            open("save.txt", 'w').write('0')   #Assigns the save file a value of '0' for checkpoint list (i.e. start() is first in list so its value is 0)
+            print("Saving the game...")
         else:
             print('I do not understand that statement.')    #error
             
@@ -124,57 +146,18 @@ def display_random_seed_path_start():
     while True:
         choice = input()
         if choice in ("pick up object", "pick up the object", "look at object", "look at the object"):
-            display_random_seed_screen_path_object()   
+            display_random_seed_screen_path_object()
+        elif choice == 'exit game':
+            saved_checkpoint = int(open("save.txt").read())
+            open("save.txt", 'w').write('1')   #Assigns the save file a value of '1' for display_random_seed_path_start() gamestate
+            print("Saving the game...")
         else:
             print('I do not understand that statement.') 
 
 def display_random_seed_screen_path_object():
     print("You pick up the object and notice that it is a " + "\033[33m" + "small dagger.")
     print("\033[39m" + "The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.")
-    class Player: 
-        def __int__(self): 
-            self.inventory = []
 
-    def add_item(self, item):
-        self.inventory.append(item)
-        print(f"You have added {item} to your inventory.")
-    def remove_item(self, item):
-        if item in self.inventory:
-            self.inventory.remove(item)
-            print(f"You have removed {item} from your inventory")
-        else: 
-            print(f"You do not have anything in your inventory")
-    def check_inventory(self):
-        if not self.inventory:
-            print("Your inventory is currently empty/")
-        else:
-            print("Here is your inventory: ")
-            for item in self.inventory:
-                print(item)
-
-#Calling Inventory
-if __name__ == "__main__":
-    Turg = Player() #Turg is player name. 
-
-    while True: 
-        print("\n1) Add an item to your inventory.")
-        print("2) Remove an item from your inventory.")
-        print("3. To check inventory, type 'inventory' or 'i'.")
-        print("4. Exit")
-
-        choice = input("Please type your choice: ")
-        if choice == "1":
-            item = input("What item do you want to add? ")
-            Turg.add_item(item)
-        elif choice == "2":
-            item = input("What item do you want to remove? ")
-            Turg.remove_item(item)
-        elif choice.lower() in ["3", "inventory", "i"]:
-            Turg.check_inventory()
-        elif choice == "4":
-            break 
-        else: 
-            print("Your input is invalid. Please try again.")
     while True:
         choice = input()
 
@@ -186,154 +169,32 @@ if __name__ == "__main__":
             #self.items.append('Rusted Dagger')
             #self.description = "A small rusted dagger.  It doesn't look like it will do much damage, but might be helpful if cornered."
             display_random_seed_screen_path_object_continue()
-
         elif choice == 'leave blade' or 'leave dagger' or 'leave knife' or 'drop knife' or 'drop dagger' or 'drop blade':
             print("You put the " + "\033[33m" +  "small dagger" + "\033[39m" + " back on the ground.")
             display_random_seed_screen_path_object_continue()
-
         elif choice == 'go down path' or 'continue' or 'go along path' or 'continue down path' or 'continue on path':
             display_random_seed_path_start1()
-class Player: 
-    def __int__(self): 
-        self.inventory = []
-
-    def add_item(self, item)
-        self.inventory.append(item)
-        print(f"You have added {item} to your inventory.")
-    def remove_item(self, item):
-        if item in self.inventory:
-            self.inventory.remove(item)
-            print(f"You have removed {item} from your inventory")
-        else: 
-            print(f"You do not have anything in your inventory")
-    def check_inventory(self):
-        if not self.inventory:
-            print("Your inventory is currently empty/")
+        elif choice == 'exit game':
+            saved_checkpoint = int(open("save.txt").read())
+            open("save.txt", 'w').write('2')
+            print("Saving the game...")
         else:
-            print("Here is your inventory: ")
-            for item in self.inventory:
-                print(item)
+            print("I don't understand that statement.")
 
-#Calling Inventory
-if __name__ == "__main__":
-    Turg = Player() #Turg is player name. 
-
-    while True: 
-        print("\n1) Add an item to your inventory.")
-        print("2) Remove an item from your inventory.")
-        print("3. To check inventory, type 'inventory' or 'i'.")
-        print("4. Exit")
-
-        choice = input("Please type your choice: ")
-        if choice == "1":
-            item = input("What item do you want to add? ")
-            Turg.add_item(item)
-        elif choice == "2":
-            item = input("What item do you want to remove? ")
-            Turg.remove_item(item)
-        elif choice.lower() in ["3", "inventory", "i"]:
-            Turg.check_inventory()
-        elif choice == "4":
-            break 
-        else: 
-            print("Your input is invalid. Please try again.")
-class Player: 
-    def __int__(self): 
-        self.inventory = []
-
-    def add_item(self, item)
-        self.inventory.append(item)
-        print(f"You have added {item} to your inventory.")
-    def remove_item(self, item):
-        if item in self.inventory:
-            self.inventory.remove(item)
-            print(f"You have removed {item} from your inventory")
-        else: 
-            print(f"You do not have anything in your inventory")
-            def check_inventory(self):
-                if not self.inventory:
-                 print("Your inventory is currently empty/")
-                else:
-                    print("Here is your inventory: ")
-            for item in self.inventory:
-                print(item)
-
-#Calling Inventory
-if __name__ == "__main__":
-    Turg = Player() #Turg is player name. 
-
-    while True: 
-        print("\n1) Add an item to your inventory.")
-        print("2) Remove an item from your inventory.")
-        print("3. To check inventory, type 'inventory' or 'i'.")
-        print("4. Exit")
-
-        choice = input("Please type your choice: ")
-        if choice == "1":
-            item = input("What item do you want to add? ")
-            Turg.add_item(item)
-        elif choice == "2":
-            item = input("What item do you want to remove? ")
-            Turg.remove_item(item)
-        elif choice.lower() in ["3", "inventory", "i"]:
-            Turg.check_inventory()
-        elif choice == "4":
-            break 
-        else: 
-            print("Your input is invalid. Please try again.")
 def display_random_seed_screen_path_object_continue():
      print("You look around and see that the path still continues in front of you.  No other path is in sight and trees surround you.  The moonlight still filters through shining a faint light on the path ahead.")
 
      while True:     
         choice = input() 
         if choice in ("go down path", "continue", "go along path", "continue down path", "continue on path"):   
-            display_random_seed_path_start1      
+            display_random_seed_path_start1
+        elif choice == 'exit game':
+            saved_checkpoint = int(open("save.txt").read())
+            open("save.txt", 'w').write('3')
+            print("Saving the game...")
         else:
             print('I do not understand that statement.')
-class Player: 
-    def __int__(self): 
-        self.inventory = []
 
-    def add_item(self, item):
-        self.inventory.append(item)
-        print(f"You have added {item} to your inventory.")
-    def remove_item(self, item):
-        if item in self.inventory:
-            self.inventory.remove(item)
-            print(f"You have removed {item} from your inventory")
-        else: 
-            print(f"You do not have anything in your inventory")
-    def check_inventory(self):
-        if not self.inventory:
-            print("Your inventory is currently empty/")
-        else:
-            print("Here is your inventory: ")
-            for item in self.inventory:
-                print(item)
-
-#Calling Inventory
-if __name__ == "__main__":
-    Turg = Player() #Turg is player name. 
-
-    while True: 
-        print("\n1) Add an item to your inventory.")
-        print("2) Remove an item from your inventory.")
-        print("3. To check inventory, type 'inventory' or 'i'.")
-        print("4. Exit")
-
-        choice = input("Please type your choice: ")
-        if choice == "1":
-            item = input("What item do you want to add? ")
-            Turg.add_item(item)
-        elif choice == "2":
-            item = input("What item do you want to remove? ")
-            Turg.remove_item(item)
-        elif choice.lower() in ["3", "inventory", "i"]:
-            Turg.check_inventory()
-        elif choice == "4":
-            break 
-        else: 
-            print("Your input is invalid. Please try again.")
 def display_random_seed_path_start1():
     print("""You continue to go along the path and eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
     The middle section of the crossroads is a wide circle with a trash can sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
@@ -343,25 +204,23 @@ def display_random_seed_path_start1():
 
         if choice == 'go to trashcan' or 'go to trash can':
             print("""You are now standing right in front of the trash can.""")
-
         elif choice == 'look inside trashcan' or 'look inside trash can' or 'look inside the trashcan' or 'look inside the trash can' or 'look inside the trashcan':
             print("You look inside the trash can and see there is a single " + "\033[33m" +  "piece of paper" + "\033[39m" + "  at the bottom")
-
         elif choice == 'get paper' or 'get the paper' or 'get piece of paper' or 'get the piece of paper' or 'pick up paper' or 'pick up the paper' or 'pick up the piece of paper' or 'pick up piece of paper':
             print("You pick up the " + "\033[33m" +  "piece of paper" + "\033[39m" + " and are able to read it from the light above." + 
                   """It reads: 
                         Welcome to (INSERT GAME NAME HERE)!  In this game, you will find there are many paths to go on.  There is no right or wrong way to play this game.  While one path might lead to something incredible, 
                         another could lead to your demise.  Be cautious.  There are several others in this world, but not all will be friendly.  Be prepared for anything.""")
-
         elif choice == 'go on left path' or 'go down left path':
             display_random_seed_crossroads_left() #demo 1 playthrough...code others in phase 2
-
         elif choice == 'go on right path' or 'go down right path':
             display_random_seed_crossroads_right()
-
         elif choice == 'go forward' or 'go down same path' or 'go on same path' or 'continue on same path' or 'continue down same path':
             display_random_seed_crossroads_forward()
-
+        elif choice == 'exit game':
+            saved_checkpoint = int(open("save.txt").read())
+            open("save.txt", 'w').write('4')
+            print("Saving the game...")
         else:
             print("I don't understand that statement.")
 
@@ -374,20 +233,20 @@ def display_random_seed_crossroads_left():
 
         if choice == 'keep going forward' or 'go forward' or 'continue forward' or 'keep going':
             display_random_seed_crossroads_left_wolf()
-
         elif choice == 'turn around' or 'turn back':
             print("You are turned around with the growling still menacingly continuing behind you.")
-
         elif choice == 'go back to crossroads' or 'go to crossroads' or 'return to crossroads':
             print("""You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
             display_random_seed_path_start()
-
         elif choice == 'fight' or 'attack' or 'kill':
             print("What do you want to fight with?")
             #add option to user for accessing inventory to attack...
             #print("Items in your inventory: ")
             #player_inventory.list_items()
-
+        elif choice == 'exit game':
+            saved_checkpoint = int(open("save.txt").read())
+            open("save.txt", 'w').write('5')
+            print("Saving the game...")
         else:
             print("I don't understand that statement.")
      
@@ -401,20 +260,20 @@ def display_random_seed_crossroads_left_wolf():
 
         if choice == 'keep going forward' or 'go forward' or 'continue forward' or 'keep going':
             display_random_seed_crossroads_left_wolf2()
-
         elif choice == 'turn around' or 'turn back':
             print("You are turned around with the growling still menacingly continuing behind you.")
-
         elif choice == 'go back to crossroads' or 'go to crossroads' or 'return to crossroads':
             print("""You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
             display_random_seed_path_start()
-
         elif choice == 'fight' or 'attack' or 'kill':
             print("What do you want to fight with?")
             #add option to user for accessing inventory to attack...
             #print("Items in your inventory: ")
             #player_inventory.list_items()
-
+        elif choice == 'exit game':
+            saved_checkpoint = int(open("save.txt").read())
+            open("save.txt", 'w').write('6')
+            print("Saving the game...")
         else:
             print("I don't understand that statement.")
 
@@ -428,10 +287,12 @@ def display_random_seed_crossroads_left_wolf2():
 
         if choice == 'attack' or 'fight' or 'attack the wolf' or 'fight the wolf':
             display_random_seed_crossroads_left_wolf_attack()
-
         elif choice == 'run away' or 'run' or 'leave':
             print("You try to get away from the wolf, but it is futile.  It continues to bite down even harder than before.  More blood continues to pool around its mouth")
-
+        elif choice == 'exit game':
+            saved_checkpoint = int(open("save.txt").read())
+            open("save.txt", 'w').write('7')
+            print("Saving the game...")
         else:
             print("I don't understand that statement.")
 
@@ -473,5 +334,13 @@ def settings_screen():
 if __name__ == "__main__":
     main()
 
+checkpoints = [start, display_random_seed_path_start, display_random_seed_screen_path_object]
+
+def load_game():
+    try:
+        saved_checkpoint = int(open("save.txt").read())
+        checkpoints[saved_checkpoint]()
+    except FileNotFoundError:
+        start()
 
 #Inventory Control
