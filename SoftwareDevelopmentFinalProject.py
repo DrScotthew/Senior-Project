@@ -1,4 +1,3 @@
-from ast import While
 from cgitb import lookup
 from http.server import ThreadingHTTPServer
 import os
@@ -11,6 +10,7 @@ from colorama import just_fix_windows_console
 import pickle
 from colorama import init
 from colorama import Fore   #ability for color change settings for objects...see 'settings'
+import json
 
 def display_title_screen():
     os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
@@ -60,8 +60,10 @@ def display_settings_screen():
 
     print(color_selection)
 
+Inventory=["Small Dagger"]
+
 class Dagger:
-    color_choice_weapons = Fore.RED
+    color_choice_weapons = Fore.YELLOW      #default object color set
     name = color_choice_weapons + 'small dagger'
     
 smalldagger = Dagger()
@@ -78,7 +80,8 @@ def settings_screen():
             choice = input("Make your choice: ")
 
             if choice == '1':
-                color_choice = Fore.BLUE
+                color_choice = 0
+                color = open("save.txt", 'w').write('0')
                 print(Fore.BLUE + 'Highlight color changed to Blue')
                 setattr(Dagger, 'name', Fore.BLUE + 'small dagger')    #changes object color for smalldagger in demo...i dont even know why this works but it does and it took me 8 hours
                 print(Fore.RESET)   #resets color of text in console back to white...object color is set, however
@@ -86,7 +89,7 @@ def settings_screen():
             elif choice == '2':
                 print(Fore.YELLOW + 'Highlight color changed to Yellow')
                 setattr(Dagger, 'name', Fore.YELLOW + 'small dagger')
-                color_choice = Fore.YELLOW
+                color_choice = 1
                 print(Fore.RESET)
 
             elif choice == '3':
@@ -129,9 +132,24 @@ def load_game():
     checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
     #checkpoints are defined as places in the story or 'timeline' for the player to access...
     #this allows for the game to always know where the player is in the story
+    color = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA, Fore.RED, Fore.GREEN]
+    
+    #with open("save.txt", 'rb') as savefile:
+    #    saved_checkpoint = int(open("save.txt").read())
+    #    checkpoints[saved_checkpoint]()
+    #    color_choice = int(open("save.txt").read())
+    #    color[color_choice]()
+    #    #saved_checkpoint, color_choice = pickle.load(savefile)
+    #    json.dump([saved_checkpoint, color], savefile)
+    #with open("save.txt", "r") as savefile:
+    #    saved_checkpoint = open("save.txt").read()
+    #    data = json.load(savefile)
+    #    json.dump(saved_checkpoint, savefile)
+    #    print("loading...")
+
     try:
         saved_checkpoint = int(open("save.txt").read())
-        checkpoints[saved_checkpoint]()
+        checkpoints[saved_checkpoint]()     #assigns the value of 0,1,2,3,etc to checkpoints in list
     except FileNotFoundError:
         start()
 
@@ -170,9 +188,10 @@ def new_game_screen():
         choice = input()
 
         if choice == 'random': #for demo playthrough
-            #Will generate a random seed for the world the player will be in
+            #Will generate a random seed for the world the player will be in...however, this is currently for the demo
             print("Generating random seed...")
             print("Loading...")
+            Inventory.clear
             start()
             
         elif choice == 'exit':
@@ -182,19 +201,26 @@ def new_game_screen():
             print("Generating world based on seed given...")
             print("Loading...")
 
+
 def start():
     print("""       You are standing in the middle of the woods at night.  There is a full moon overhead casting a faint glow on the ground in front of you.  There are trees surrounding you in every direction and span far into the night.  However, there seems to be traces of a path to your right.  It doesn't look to have been walked on in a long time.""")
-
+    #checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
     while True:     #Loop continuously
         choice = input()   #Get the input
         if choice in ("go on path", "go along path"):    #Correct responses...
             startpath()       #...break the loop
         elif choice == 'exit game':
-            saved_checkpoint = int(open("save.txt").read())   #Saves the gamestate
-            open("save.txt", 'w').write('0')   #Assigns the save file a value of '0' for checkpoint list (i.e. start() is first in list so its value is 0)
+            #saved_checkpoint = int(open("save.txt").read())   #Saves the gamestate
+            saved_checkpoint = open("save.txt", 'w').write('0')   #Assigns the save file a value of '0' for checkpoint list (i.e. start() is first in list so its value is 0)
+            #color = open("save.txt", 'w').write(color_choice)
+            open("save.txt", 'w').write('1')
             print("Saving the game...")
+            #with open('save.txt', 'wb') as savefile:
+            #    pickle.dump(saved_checkpoint, savefile)
+        elif choice == 'inventory':
+            Inventory_Version_1.main1()     #Will access Inventory_Version_1 to show inventory options
         else:
-            print('I do not understand that statement.')    #error
+            print('I do not understand that statement.')    #error control
 
 def startpath():
     print("""       You walk along the path, careful to not trip on any rocks or limbs along the way.  You don't get very far before seeing an object lying on the ground, shining from the moonlight filtering through the trees.  You can't make out exactly what it is, though.""")
@@ -204,27 +230,28 @@ def startpath():
         if choice in ("pick up object", "pick up the object", "look at object", "look at the object"):
             startpath_object()
         elif choice == 'exit game':
-            saved_checkpoint = int(open("save.txt").read())
+            #saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('1')   #Assigns the save file a value of '1' startpath() gamestate
             print("Saving the game...")
+        elif choice == 'inventory':
+            Inventory_Version_1.main1()
         else:
             print('I do not understand that statement.') 
 
 def startpath_object():
     print("     You pick up the object and notice that it is a " + smalldagger.name)
-    #print("     You pick up the object and notice that it is a " + "\033[33m" + "small dagger.")
     print("     \033[39m" + "The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.")
-
+    global Inventory
     while True:
         choice = input()
 
         if choice in ("keep blade", "keep dagger", "keep knife", "take dagger", "take knife", "take blade"):
             print("     You take the " + "\033[33m" +  "small dagger" + "\033[39m" + " and hold it tightly in your hand.")  #ANSI codes implemented...change to yellow then back to white
-            #add item to inventory for player to use later...
-            #player_inventory.add_item(item)
-            #self.name = 'Rusted Dagger'
-            #self.items.append('Rusted Dagger')
-            #self.description = "A small rusted dagger.  It doesn't look like it will do much damage, but might be helpful if cornered."
+            Inventory_Version_1.Inventory.append("Small Dagger")    #this adds the item to overall inventory list
+            Inventory_Version_1.addToInventoryWeapons("Small Dagger")   #adds item to inventory under 'Weapons' list
+            #this is currently hardcoded...to effectively be randomly generated, this will need to change so that there is a list of preconceived items associated with their respective types
+            #e.g. if the player picked up a health item, one would need to code 'addToInventoryHealthItems'...would be better if program automatically assigned it
+            #will work on this soon
             startpath_continue()
         elif choice in ("drop blade", "drop dagger", "drop knife", "leave dagger", "leave knife", "leave blade"):
             print("     You put the " + "\033[33m" +  "small dagger" + "\033[39m" + " back on the ground.")
@@ -235,12 +262,14 @@ def startpath_object():
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('2')
             print("Saving the game...")
+        elif choice == 'inventory':
+            Inventory_Version_1.main1()
         else:
             print("I don't understand that statement.")
 
 def startpath_continue():
      print("     You look around and see that the path still continues in front of you.  No other path is in sight and trees surround you.  The moonlight still filters through shining a faint light on the path ahead.")
-
+     global Inventory
      while True:     
         choice = input() 
         if choice in ("go down path", "continue", "go along path", "continue down path", "continue on path"):   
@@ -249,6 +278,8 @@ def startpath_continue():
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('3')
             print("Saving the game...")
+        elif choice == 'inventory':
+            Inventory_Version_1.main1()
         else:
             print('I do not understand that statement.')
 
@@ -277,6 +308,8 @@ def crossroads():
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('4')
             print("Saving the game...")
+        elif choice == 'inventory':
+            Inventory_Version_1.main1()
         else:
             print("I don't understand that statement.")
 
@@ -302,6 +335,8 @@ def crossroads_left():
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('5')
             print("Saving the game...")
+        elif choice == 'inventory':
+            Inventory_Version_1.main1()
         else:
             print("I don't understand that statement.")
 
@@ -327,6 +362,8 @@ def crossroads_left1():
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('6')
             print("Saving the game...")
+        elif choice == 'inventory':
+            Inventory_Version_1.main1()
         else:
             print("I don't understand that statement.")
 
@@ -344,6 +381,8 @@ def crossroads_left2():
             saved_checkpoint = int(open("save.txt").read())
             open("save.txt", 'w').write('7')
             print("Saving the game...")
+        elif choice == 'inventory':
+            Inventory_Version_1.main1()
         else:
             print("I don't understand that statement.")
 
