@@ -7,7 +7,6 @@ import colorama
 #Colorama is a way to highlight text color in the output console
 from colorama import just_fix_windows_console
 #'Fixes' windows and forces colored text to work
-import pickle
 from colorama import init
 from colorama import Fore   #ability for color change settings for objects...see 'settings'
 import json
@@ -60,10 +59,8 @@ def display_settings_screen():
 
     print(color_selection)
 
-Inventory=["Small Dagger"]
-
 class Dagger:
-    color_choice_weapons = Fore.YELLOW      #default object color set
+    color_choice_weapons = Fore.YELLOW      #default object color set to YELLOW
     name = color_choice_weapons + 'small dagger'
     
 smalldagger = Dagger()
@@ -75,39 +72,40 @@ def settings_screen():
      #for color_choice in ("Fore.BLUE", "Fore.YELLOW", "Fore.MAGENTA", "Fore.RED", "Fore.GREEN"):
      #color_choice = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA, Fore.RED, Fore.GREEN]
      #color_list = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA, Fore.RED, Fore.GREEN]
-     for color_choice in ("1", "2", "3", "4", "5"):
+     for color_choice in [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA, Fore.RED, Fore.GREEN]:
          while True:
             choice = input("Make your choice: ")
 
             if choice == '1':
-                color_choice = 0
-                color = open("save.txt", 'w').write('0')
+                #color = open("save.txt", 'w').write('0')
+                #color_choice=data['highlight_color']
+                data.update({'highlight_color': Fore.BLUE})
                 print(Fore.BLUE + 'Highlight color changed to Blue')
                 setattr(Dagger, 'name', Fore.BLUE + 'small dagger')    #changes object color for smalldagger in demo...i dont even know why this works but it does and it took me 8 hours
                 print(Fore.RESET)   #resets color of text in console back to white...object color is set, however
 
             elif choice == '2':
+                data.update({'highlight_color': Fore.YELLOW})
                 print(Fore.YELLOW + 'Highlight color changed to Yellow')
                 setattr(Dagger, 'name', Fore.YELLOW + 'small dagger')
-                color_choice = 1
                 print(Fore.RESET)
 
             elif choice == '3':
+                data.update({'highlight_color': Fore.MAGENTA})
                 print(Fore.MAGENTA + 'Highlight color changed to Purple')
                 setattr(Dagger, 'name', Fore.MAGENTA + 'small dagger')
-                color_choice = Fore.MAGENTA
                 print(Fore.RESET)
 
             elif choice == '4':
+                data.update({'highlight_color': Fore.RED})
                 print(Fore.RED + 'Highlight color changed to Red')
                 setattr(Dagger, 'name', Fore.RED + 'small dagger')
-                color_choice = Fore.RED
                 print(Fore.RESET)
            
             elif choice == '5':
+                data.update({'highlight_color': Fore.GREEN})
                 print(Fore.GREEN + 'Highlight color changed to Green')
                 setattr(Dagger, 'name', Fore.GREEN + 'small dagger')
-                color_choice = Fore.GREEN
                 print(Fore.RESET)
 
             elif choice == 'go back':
@@ -117,6 +115,18 @@ def settings_screen():
                 print("Invalid input.  Please choose a highlight color from the list.")
      
 color_choice = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA , Fore.RED, Fore.GREEN]
+
+data = {
+    'checkpoint': 0,
+    'complete inventory': Inventory_Version_1.Inventory,
+    'weapons': Inventory_Version_1.InventoryWeapons,
+    'armor': Inventory_Version_1.InventoryArmor,
+    'ammo': Inventory_Version_1.InventoryAmmo,
+    'health items': Inventory_Version_1.InventoryHealthItems,
+    'currently equipped': Inventory_Version_1.InventoryCurrentlyEquipped,
+    'money': Inventory_Version_1.InventoryMoney,
+    'highlight_color': Fore.YELLOW
+    }
 
 def main():
     #automatically goes to title screen from main() function
@@ -128,29 +138,38 @@ def main():
     checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
 
 def load_game():
+    #data = {
+    #'checkpoint': 0,
+    #'complete inventory': Inventory_Version_1.Inventory,
+    #'weapons': Inventory_Version_1.InventoryWeapons,
+    #'armor': Inventory_Version_1.InventoryArmor,
+    #'ammo': Inventory_Version_1.InventoryAmmo,
+    #'health items': Inventory_Version_1.InventoryHealthItems,
+    #'currently equipped': Inventory_Version_1.InventoryCurrentlyEquipped,
+    #'money': Inventory_Version_1.InventoryMoney,
+    #'highlight_color': Fore.YELLOW
+    #}
     #this allows for the player to load their game from a save file
     checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
     #checkpoints are defined as places in the story or 'timeline' for the player to access...
     #this allows for the game to always know where the player is in the story
     color = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA, Fore.RED, Fore.GREEN]
     
-    #with open("save.txt", 'rb') as savefile:
-    #    saved_checkpoint = int(open("save.txt").read())
-    #    checkpoints[saved_checkpoint]()
-    #    color_choice = int(open("save.txt").read())
-    #    color[color_choice]()
-    #    #saved_checkpoint, color_choice = pickle.load(savefile)
-    #    json.dump([saved_checkpoint, color], savefile)
-    #with open("save.txt", "r") as savefile:
-    #    saved_checkpoint = open("save.txt").read()
-    #    data = json.load(savefile)
-    #    json.dump(saved_checkpoint, savefile)
-    #    print("loading...")
 
     try:
-        saved_checkpoint = int(open("save.txt").read())
-        checkpoints[saved_checkpoint]()     #assigns the value of 0,1,2,3,etc to checkpoints in list
-    except FileNotFoundError:
+        with open('save.txt') as save_file:
+            data = json.load(save_file)     #gets data from save file...
+            Inventory_Version_1.Inventory = data.get("inventory")   #checks what items player had in save file
+            Inventory_Version_1.InventoryWeapons = data.get("weapons")
+            Inventory_Version_1.InventoryArmor = data.get("armor")
+            Inventory_Version_1.InventoryAmmo = data.get("ammo")
+            Inventory_Version_1.InventoryHealthItems = data.get("health items")
+            Inventory_Version_1.InventoryCurrentlyEquipped = data.get("currently equipped")
+            Inventory_Version_1.InventoryMoney = data.get("money")
+            Dagger.color_choice_weapons = data.get("highlight_color")
+            saved_checkpoint = data.get("checkpoint")   #checks where player was when they exited the game last
+            checkpoints[saved_checkpoint]()     #puts player back at same 'checkpoint' they were in last
+    except:
         start()
 
 def main_menu():
@@ -191,7 +210,7 @@ def new_game_screen():
             #Will generate a random seed for the world the player will be in...however, this is currently for the demo
             print("Generating random seed...")
             print("Loading...")
-            Inventory.clear
+            Inventory_Version_1.Inventory.clear
             start()
             
         elif choice == 'exit':
@@ -210,13 +229,10 @@ def start():
         if choice in ("go on path", "go along path"):    #Correct responses...
             startpath()       #...break the loop
         elif choice == 'exit game':
-            #saved_checkpoint = int(open("save.txt").read())   #Saves the gamestate
-            saved_checkpoint = open("save.txt", 'w').write('0')   #Assigns the save file a value of '0' for checkpoint list (i.e. start() is first in list so its value is 0)
-            #color = open("save.txt", 'w').write(color_choice)
-            open("save.txt", 'w').write('1')
+            data.update({'checkpoint': 0})
+            with open('save.txt', 'w') as save_file:
+                json.dump(data,save_file)
             print("Saving the game...")
-            #with open('save.txt', 'wb') as savefile:
-            #    pickle.dump(saved_checkpoint, savefile)
         elif choice == 'inventory':
             Inventory_Version_1.main1()     #Will access Inventory_Version_1 to show inventory options
         else:
@@ -230,8 +246,9 @@ def startpath():
         if choice in ("pick up object", "pick up the object", "look at object", "look at the object"):
             startpath_object()
         elif choice == 'exit game':
-            #saved_checkpoint = int(open("save.txt").read())
-            open("save.txt", 'w').write('1')   #Assigns the save file a value of '1' startpath() gamestate
+            data.update({'checkpoint': 1})
+            with open('save.txt', 'w') as save_file:
+                json.dump(data,save_file)
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
@@ -252,6 +269,8 @@ def startpath_object():
             #this is currently hardcoded...to effectively be randomly generated, this will need to change so that there is a list of preconceived items associated with their respective types
             #e.g. if the player picked up a health item, one would need to code 'addToInventoryHealthItems'...would be better if program automatically assigned it
             #will work on this soon
+            data.update({'complete inventory': Inventory_Version_1.Inventory})
+            data.update({'weapons': Inventory_Version_1.InventoryWeapons})
             startpath_continue()
         elif choice in ("drop blade", "drop dagger", "drop knife", "leave dagger", "leave knife", "leave blade"):
             print("     You put the " + "\033[33m" +  "small dagger" + "\033[39m" + " back on the ground.")
@@ -259,8 +278,9 @@ def startpath_object():
         elif choice in ("go down path", "continue", "go along path", "continue down path", "continue on path"):
             startpath_continue()
         elif choice == 'exit game':
-            saved_checkpoint = int(open("save.txt").read())
-            open("save.txt", 'w').write('2')
+            data.update({'checkpoint': 2})
+            with open('save.txt', 'w') as save_file:
+                json.dump(data,save_file)
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
@@ -275,8 +295,9 @@ def startpath_continue():
         if choice in ("go down path", "continue", "go along path", "continue down path", "continue on path"):   
             crossroads()
         elif choice == 'exit game':
-            saved_checkpoint = int(open("save.txt").read())
-            open("save.txt", 'w').write('3')
+            data.update({'checkpoint': 3})
+            with open('save.txt', 'w') as save_file:
+                json.dump(data,save_file)
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
@@ -305,8 +326,9 @@ def crossroads():
         elif choice in ("go forward", "go down same path", "go on same path", "continue on same path", "continue down same path"):
             crossroads_forward()
         elif choice == 'exit game':
-            saved_checkpoint = int(open("save.txt").read())
-            open("save.txt", 'w').write('4')
+            data.update({'checkpoint': 4})
+            with open('save.txt', 'w') as save_file:
+                json.dump(data,save_file)
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
@@ -332,8 +354,9 @@ def crossroads_left():
             #print("Items in your inventory: ")
             #player_inventory.list_items()
         elif choice == 'exit game':
-            saved_checkpoint = int(open("save.txt").read())
-            open("save.txt", 'w').write('5')
+            data.update({'checkpoint': 5})
+            with open('save.txt', 'w') as save_file:
+                json.dump(data,save_file)
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
@@ -359,8 +382,9 @@ def crossroads_left1():
             #print("Items in your inventory: ")
             #player_inventory.list_items()
         elif choice == 'exit game':
-            saved_checkpoint = int(open("save.txt").read())
-            open("save.txt", 'w').write('6')
+            data.update({'checkpoint': 6})
+            with open('save.txt', 'w') as save_file:
+                json.dump(data,save_file)
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
@@ -378,8 +402,9 @@ def crossroads_left2():
         elif choice in ("run away", "run", "leave"):
             print("You try to get away from the wolf, but it is futile.  It continues to bite down even harder than before.  More blood continues to pool around its mouth")
         elif choice == 'exit game':
-            saved_checkpoint = int(open("save.txt").read())
-            open("save.txt", 'w').write('7')
+            data.update({'checkpoint': 7})
+            with open('save.txt', 'w') as save_file:
+                json.dump(data,save_file)
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()

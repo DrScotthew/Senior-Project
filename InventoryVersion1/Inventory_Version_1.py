@@ -1,7 +1,7 @@
 #Inventory Management System (for demo)
 #Full game will include lists of possible items that may appear in game when randomly generating seeds
-
 from asyncio.windows_events import NULL
+
 
 Inventory=[]
 InventoryWeapons=[]
