@@ -10,6 +10,11 @@ from colorama import just_fix_windows_console
 from colorama import init
 from colorama import Fore   #ability for color change settings for objects...see 'settings'
 import json
+import traceback
+import random
+import StarWarsDataSets
+import SupernaturalDataSets
+import DemoDataSets
 
 def display_title_screen():
     os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
@@ -59,53 +64,75 @@ def display_settings_screen():
 
     print(color_selection)
 
-class Dagger:
-    color_choice_weapons = Fore.YELLOW      #default object color set to YELLOW
-    name = color_choice_weapons + 'small dagger'
-    
-smalldagger = Dagger()
+def data_starwars():    #accesses data sets for star wars
+    global place
+    global weapon
+    global weapon_name
+    weapon_name = random.choice(StarWarsDataSets.weapons)
+    place = random.choice(StarWarsDataSets.woods)   #randomly chooses values from specified list
+    try: 
+        weapon = color_choice + weapon_name + Fore.RESET
+    except:
+        weapon = Fore.YELLOW + weapon_name + Fore.RESET
 
+def data_supernatural():    #accesses data sets for supernatural
+    global place
+    global weapon
+    global weapon_name
+    weapon_name = random.choice(SupernaturalDataSets.weapons)
+    place = random.choice(SupernaturalDataSets.woods)   #randomly chooses values from specified list
+    try: 
+        weapon = color_choice + weapon_name + Fore.RESET
+    except:
+        weapon = Fore.YELLOW + weapon_name + Fore.RESET
+
+def data_demo():
+    global place
+    global weapon
+    global weapon_name
+    weapon_name = random.choice(DemoDataSets.weapons)
+    place = random.choice(DemoDataSets.woods)   #randomly chooses values from specified list
+    try: 
+        weapon = color_choice + weapon_name + Fore.RESET
+    except:
+        weapon = Fore.YELLOW + weapon_name + Fore.RESET
 
 def settings_screen():
      #uses ASCI codes to change colors...
      display_settings_screen()
-     #for color_choice in ("Fore.BLUE", "Fore.YELLOW", "Fore.MAGENTA", "Fore.RED", "Fore.GREEN"):
-     #color_choice = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA, Fore.RED, Fore.GREEN]
-     #color_list = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA, Fore.RED, Fore.GREEN]
+     global color_choice
      for color_choice in [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA, Fore.RED, Fore.GREEN]:
          while True:
             choice = input("Make your choice: ")
 
             if choice == '1':
-                #color = open("save.txt", 'w').write('0')
-                #color_choice=data['highlight_color']
                 data.update({'highlight_color': Fore.BLUE})
                 print(Fore.BLUE + 'Highlight color changed to Blue')
-                setattr(Dagger, 'name', Fore.BLUE + 'small dagger')    #changes object color for smalldagger in demo...i dont even know why this works but it does and it took me 8 hours
+                color_choice = Fore.BLUE
                 print(Fore.RESET)   #resets color of text in console back to white...object color is set, however
 
             elif choice == '2':
                 data.update({'highlight_color': Fore.YELLOW})
                 print(Fore.YELLOW + 'Highlight color changed to Yellow')
-                setattr(Dagger, 'name', Fore.YELLOW + 'small dagger')
+                color_choice = Fore.YELLOW
                 print(Fore.RESET)
 
             elif choice == '3':
                 data.update({'highlight_color': Fore.MAGENTA})
                 print(Fore.MAGENTA + 'Highlight color changed to Purple')
-                setattr(Dagger, 'name', Fore.MAGENTA + 'small dagger')
+                color_choice = Fore.MAGENTA
                 print(Fore.RESET)
 
             elif choice == '4':
                 data.update({'highlight_color': Fore.RED})
                 print(Fore.RED + 'Highlight color changed to Red')
-                setattr(Dagger, 'name', Fore.RED + 'small dagger')
+                color_choice = Fore.RED
                 print(Fore.RESET)
            
             elif choice == '5':
                 data.update({'highlight_color': Fore.GREEN})
                 print(Fore.GREEN + 'Highlight color changed to Green')
-                setattr(Dagger, 'name', Fore.GREEN + 'small dagger')
+                color_choice = Fore.GREEN
                 print(Fore.RESET)
 
             elif choice == 'go back':
@@ -116,6 +143,8 @@ def settings_screen():
      
 color_choice = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA , Fore.RED, Fore.GREEN]
 
+setting = [DemoDataSets.woods, StarWarsDataSets.woods, SupernaturalDataSets.woods]
+
 data = {
     'checkpoint': 0,
     'complete inventory': Inventory_Version_1.Inventory,
@@ -125,7 +154,9 @@ data = {
     'health items': Inventory_Version_1.InventoryHealthItems,
     'currently equipped': Inventory_Version_1.InventoryCurrentlyEquipped,
     'money': Inventory_Version_1.InventoryMoney,
-    'highlight_color': Fore.YELLOW
+    'highlight_color': Fore.YELLOW,
+    'setting': DemoDataSets.woods
+    #this allows for the player to load their game from a save file
     }
 
 def main():
@@ -138,18 +169,7 @@ def main():
     checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
 
 def load_game():
-    #data = {
-    #'checkpoint': 0,
-    #'complete inventory': Inventory_Version_1.Inventory,
-    #'weapons': Inventory_Version_1.InventoryWeapons,
-    #'armor': Inventory_Version_1.InventoryArmor,
-    #'ammo': Inventory_Version_1.InventoryAmmo,
-    #'health items': Inventory_Version_1.InventoryHealthItems,
-    #'currently equipped': Inventory_Version_1.InventoryCurrentlyEquipped,
-    #'money': Inventory_Version_1.InventoryMoney,
-    #'highlight_color': Fore.YELLOW
-    #}
-    #this allows for the player to load their game from a save file
+    
     checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
     #checkpoints are defined as places in the story or 'timeline' for the player to access...
     #this allows for the game to always know where the player is in the story
@@ -166,7 +186,8 @@ def load_game():
             Inventory_Version_1.InventoryHealthItems = data.get("health items")
             Inventory_Version_1.InventoryCurrentlyEquipped = data.get("currently equipped")
             Inventory_Version_1.InventoryMoney = data.get("money")
-            Dagger.color_choice_weapons = data.get("highlight_color")
+            color_choice = data.get("highlight_color")
+            place = data.get("setting")
             saved_checkpoint = data.get("checkpoint")   #checks where player was when they exited the game last
             checkpoints[saved_checkpoint]()     #puts player back at same 'checkpoint' they were in last
     except:
@@ -211,6 +232,19 @@ def new_game_screen():
             print("Generating random seed...")
             print("Loading...")
             Inventory_Version_1.Inventory.clear
+            data_demo()     #will assign demo data for wold generation
+            start()
+
+        elif choice == 'star wars':
+            print("Generating a Star Wars themed world...")
+            print("Loading...")
+            data_starwars()     #will assign star wars data sets for wold generation
+            start()
+
+        elif choice == 'supernatural':
+            print("Generating a Supernatural themed world...")
+            print("Loading...")
+            data_supernatural()     #will assign supernatural data sets for world generation
             start()
             
         elif choice == 'exit':
@@ -220,10 +254,19 @@ def new_game_screen():
             print("Generating world based on seed given...")
             print("Loading...")
 
+flowchart = []  #the flowchart for the player's choices in the game...
 
 def start():
-    print("""       You are standing in the middle of the woods at night.  There is a full moon overhead casting a faint glow on the ground in front of you.  There are trees surrounding you in every direction and span far into the night.  However, there seems to be traces of a path to your right.  It doesn't look to have been walked on in a long time.""")
-    #checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2, crossroads_left3]
+    print("""       You are standing in the middle of the """ + place + """ at night.  
+    There is a full moon overhead casting a faint glow on the ground in front of you.  There are trees surrounding you in every direction and span far into the night.  However, there seems to be traces of a path to your right.  It doesn't look to have been walked on in a long time.""")
+    
+    flowchart.append("start")
+
+    #stack = traceback.extract_stack()
+    #filename, codeline, funcName, text = stack[-2]
+
+    #print(funcName)
+
     while True:     #Loop continuously
         choice = input()   #Get the input
         if choice in ("go on path", "go along path"):    #Correct responses...
@@ -240,7 +283,9 @@ def start():
 
 def startpath():
     print("""       You walk along the path, careful to not trip on any rocks or limbs along the way.  You don't get very far before seeing an object lying on the ground, shining from the moonlight filtering through the trees.  You can't make out exactly what it is, though.""")
-
+    
+    flowchart.append("startpath")
+    
     while True:
         choice = input()
         if choice in ("pick up object", "pick up the object", "look at object", "look at the object"):
@@ -256,16 +301,22 @@ def startpath():
             print('I do not understand that statement.') 
 
 def startpath_object():
-    print("     You pick up the object and notice that it is a " + smalldagger.name)
-    print("     \033[39m" + "The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.")
+    #print("     You pick up the object and notice that it is a " + smalldagger.name)
+    print("     You pick up the object and notice that it is a " + weapon)
+    print("     The blade is slightly rusted, but otherwise seems to be in good condition.  The handle is tightly wrapped in what looks like some type of leather cloth.")
+    
+    flowchart.append("startpath_object")
+
     global Inventory
     while True:
         choice = input()
 
         if choice in ("keep blade", "keep dagger", "keep knife", "take dagger", "take knife", "take blade"):
             print("     You take the " + "\033[33m" +  "small dagger" + "\033[39m" + " and hold it tightly in your hand.")  #ANSI codes implemented...change to yellow then back to white
-            Inventory_Version_1.Inventory.append("Small Dagger")    #this adds the item to overall inventory list
-            Inventory_Version_1.addToInventoryWeapons("Small Dagger")   #adds item to inventory under 'Weapons' list
+            #Inventory_Version_1.Inventory.append("Small Dagger")    #this adds the item to overall inventory list
+            Inventory_Version_1.Inventory.append(weapon_name)
+            Inventory_Version_1.addToInventoryWeapons(weapon_name)
+            #Inventory_Version_1.addToInventoryWeapons("Small Dagger")   #adds item to inventory under 'Weapons' list
             #this is currently hardcoded...to effectively be randomly generated, this will need to change so that there is a list of preconceived items associated with their respective types
             #e.g. if the player picked up a health item, one would need to code 'addToInventoryHealthItems'...would be better if program automatically assigned it
             #will work on this soon
@@ -289,6 +340,9 @@ def startpath_object():
 
 def startpath_continue():
      print("     You look around and see that the path still continues in front of you.  No other path is in sight and trees surround you.  The moonlight still filters through shining a faint light on the path ahead.")
+     
+     flowchart.append("startpath_continue")
+
      global Inventory
      while True:     
         choice = input() 
@@ -307,6 +361,8 @@ def startpath_continue():
 def crossroads():
     print("""       You continue to go along the path and eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.  The middle section of the crossroads is a wide circle with a trash can sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
     
+    flowchart.append("crossroads")
+
     while True:
         choice = input()
 
@@ -337,7 +393,9 @@ def crossroads():
 
 def crossroads_left():
     print("""       You go down the path to your left, leaving the crossroads behind you.  Eventually, the light from the crossroads becomes faint.  The path in front of you is almost invisible from the pitch black darkness all around.  Suddenly, a growling sound can be heard from in front of you, though you cannot see what is making the sound.""")
-       
+    
+    flowchart.append("crossroads_left")
+
     while True:
         choice = input()
 
@@ -349,10 +407,7 @@ def crossroads_left():
             print("""       You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
             crossroads()
         elif choice in ("fight", "attack", "kill"):
-            print("     What do you want to fight with?")
-            #add option to user for accessing inventory to attack...
-            #print("Items in your inventory: ")
-            #player_inventory.list_items()
+            preattack_inventory_check()
         elif choice == 'exit game':
             data.update({'checkpoint': 5})
             with open('save.txt', 'w') as save_file:
@@ -366,6 +421,8 @@ def crossroads_left():
 def crossroads_left1():
     print("""       You slowly move forward towards the growling which has gotten significantly louder and more menacing now.  After a few steps, you can start to make out what seems to be a wolf-like creature in the dark.  Glowing yellow eyes are faint, but seem to be staring right into your soul.  The creature's growling starts to hurt your ears as it increases in volume.""")
 
+    flowchart.append("crossroads_left1")
+
     while True:
         choice = input()
 
@@ -377,10 +434,7 @@ def crossroads_left1():
             print("""       You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
             crossroads()
         elif choice in ("fight", "attack", "kill"):
-            print("     What do you want to fight with?")
-            #add option to user for accessing inventory to attack...
-            #print("Items in your inventory: ")
-            #player_inventory.list_items()
+            attack_wolf()
         elif choice == 'exit game':
             data.update({'checkpoint': 6})
             with open('save.txt', 'w') as save_file:
@@ -394,11 +448,13 @@ def crossroads_left1():
 def crossroads_left2():
     print("""       You continue to move forward towards the creature still growling.  You only get three steps further before the creature suddenly lunges forward at you.  Fangs sink down into your right arm as the creature bites down hard.  Seeing it clearly, you now know it is a large black wolf.  The pain causes you to scream out in pain.  Blood is now all over your arm and falling to the forest floor.  The wolf continues to hold his grip on your arm and shows no signs of letting go.""")
 
+    flowchart.append("crossroads_left2")
+
     while True:
         choice = input()
 
         if choice in ("attack", "fight", "attack the wolf", "fight the wolf"):
-            crossroads_left3()
+            attack_wolf()
         elif choice in ("run away", "run", "leave"):
             print("You try to get away from the wolf, but it is futile.  It continues to bite down even harder than before.  More blood continues to pool around its mouth")
         elif choice == 'exit game':
@@ -411,13 +467,48 @@ def crossroads_left2():
         else:
             print("I don't understand that statement.")
 
-def crossroads_left3():
-    print("What do you want to attack the wolf with?")
+#last_checkpoint = flowchart(-1)
+
+def preattack_inventory_check():
+    #checks if the player has any weapons available to attack with...if so, then the function continues...
+    while True:
+        if Inventory_Version_1.InventoryWeapons == []:
+            print("You have no weapons to attack with. ")
+            stack = traceback.extract_stack()
+            filename, codeline, funcName, text = stack[-2]
+
+            #print(funcName)
+            checkpoints = [start, startpath, startpath_object, startpath_continue, crossroads, crossroads_left, crossroads_left1, crossroads_left2]
+            #checkpoints = ["start", "startpath", "startpath_object", "startpath_continue", "crossroads", "crossroads_left", "crossroads_left1", "crossroads_left2"]
+            last_checkpoint = flowchart[-1]     #gets last checkpoint in player's flowchart
+            print(last_checkpoint)
+            #methods = {last_checkpoint: start or startpath or crossroads_left}
+            #method_name = 'start' # set by the command line options
+            if funcName in checkpoints:      #compares checkpoint name to function names
+                checkpoints[last_checkpoint]()      #automatically sends player back to checkpoint...
+                #last_checkpoint()
+            else:
+                raise Exception("Method %s not implemented" % last_checkpoint)
+        else:
+            attack_wolf()
+
+def attack_wolf():
+    print("     What do you want to fight with?")   #allows player to choose a weapon to fight with
+    print("     Current weapons avaiable to use:")   #retrieves avaiable weapons from inventory player currently has
+    Inventory_Version_1.showWeapons()
+
+    flowchart.append("attack_wolf")
 
     while True:
         choice = input()
+        
+        if choice in Inventory_Version_1.InventoryWeapons:  #read player input and match string value to inventory weapons available
+            print("You use the " + choice + " to attack the wolf...")
+        else:
+            print("I don't understand that statement.")
 
-        #incorporate inventory management and options...list any available weapons
+def crossroads_left3():
+    print("yay")
 
 def objects():
     weapons = [small_dagger]

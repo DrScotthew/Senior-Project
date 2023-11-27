@@ -21,6 +21,15 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DemoDataSets.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SupernaturalDataSets.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StarWarsDataSets.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SoftwareDevelopmentFinalProject.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

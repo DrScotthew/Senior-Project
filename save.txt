@@ -1,1 +1,1 @@
-{"checkpoint": 3, "complete inventory": ["Small Dagger"], "weapons": ["Small Dagger"], "armor": [], "ammo": [], "health items": [], "currently equipped": [], "money": [], "highlight_color": "\u001b[33m"}
+{"checkpoint": 1, "complete inventory": [], "weapons": [], "armor": [], "ammo": [], "health items": [], "currently equipped": [], "money": [], "highlight_color": "\u001b[33m", "setting": ["woods"]}
