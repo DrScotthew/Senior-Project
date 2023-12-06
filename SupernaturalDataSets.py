@@ -11,5 +11,5 @@ trash_can = ["trash can"]
 
 piece_of_paper = ["John Winchester's Journal"]
 
-wolf = ["Banshee", "Changeling", "Chimera", "Familiar", "Shapeshifter", "Skinwalker", "Hellhound",
+enemy = ["Banshee", "Changeling", "Chimera", "Familiar", "Shapeshifter", "Skinwalker", "Hellhound",
         "Werewolf", "Wendigo"]

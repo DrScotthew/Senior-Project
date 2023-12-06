@@ -7,7 +7,9 @@ woods = ["Kashyyyk", "Endor"]
 
 trash_can = ["Gonk Droid"]
 
-piece_of_paper = ["Old Datapad", "Flimsy"]
+piece_of_paper = ["Old Datapad"]
+
+enemy = ["Mylaya", "Night-Crawler", "Oryyka Howler", "Katarn", "Merek", "Boar-Wolf", "Gorax", "Hanadak"]
 
 wolf_kashyyyk = ["Mylaya", "Night-Crawler", "Oryyka Howler", "Katarn"]
 
