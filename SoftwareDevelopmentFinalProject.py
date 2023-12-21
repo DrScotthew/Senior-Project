@@ -1,3 +1,4 @@
+from ast import Try, TryStar
 from cgitb import lookup
 from http.server import ThreadingHTTPServer
 import os
@@ -15,6 +16,78 @@ import random
 import StarWarsDataSets
 import SupernaturalDataSets
 import DemoDataSets
+import openai
+from openai import OpenAI   #uses openai
+import config
+
+client = OpenAI(
+  organization=openai.api_key,
+)
+
+openai.api_key = config.api_key     #sets api key
+random_generation_spn = []      #creates spn array elements
+random_generation_starwars = []     #creates star wars array elements
+
+
+def supernatural_openai_gen():   #all random generation for supernatural
+    supernatural_prompt = ["give 5 random weapon names from the tv show 'Supernatural' that are each unique" + "\n\n"]
+    
+    response = openai.completions.create(
+        model="text-davinci-003",     #using davinci003
+        prompt=supernatural_prompt,  #asks openai to give a weapon name from 'Supernatural'
+        temperature=0.7,
+        frequency_penalty=0,
+        presence_penalty=0,
+        max_tokens=50
+    )
+    supernatural_weapon = response.choices[0].text;L = [supernatural_weapon]
+    spn_file = open('random_weapons_supernatural.txt', 'w')     #saves each weapon name into new .txt file
+    spn_file.writelines(L)
+    spn_file.close
+
+    spn_file = open('random_weapons_supernatural.txt', 'r')
+
+def starwars_openai_gen():
+    starwars_prompt = ["give 5 random weapon names from 'Star Wars' that are each unique" + "\n\n"]
+    
+    response = openai.completions.create(
+    model="text-davinci-003",     #using davinci003
+    prompt=starwars_prompt,  #asks openai to give a weapon name from 'Supernatural'
+    temperature=0.7,
+    frequency_penalty=0,
+    presence_penalty=0,
+    max_tokens=50
+    )
+    starwars_weapon = response.choices[0].text;
+    L1 = [starwars_weapon]
+    starwars_file = open('random_weapons_starwars.txt', 'w')
+    starwars_file.writelines(L1)
+    starwars_file.close
+
+    starwars_file = open('random_weapons_starwars.txt', 'r')
+
+def read_starwars_data_set_file():
+    starwars_openai_gen()
+    starwars_file = open('random_weapons_starwars.txt', 'r')
+    with starwars_file as f:     #reads from new supernatural random generation .txt file
+        lines = f.readlines()   #reads each line
+        for x in lines:
+            sp = x.split(". ")  #splits each line between list part and weapon names
+            bad_part, final_weapon_name = sp[0], sp[1]  #assigns values to each
+                #sometimes gives errors saying the index is out of range...not sure why...recommend deleting save file each time...will fix soon
+            random_generation_starwars.append(final_weapon_name)
+            #print(final_weapon_name)    #only prints out weapon names
+
+def read_supernatural_data_set_file():
+    spn_file = open('random_weapons_supernatural.txt', 'r')
+    with spn_file as f:     #reads from new supernatural random generation .txt file
+        lines = f.readlines()   #reads each line
+        for x in lines:
+            sp = x.split(". ")  #splits each line between list part and weapon names
+            bad_part, final_weapon_name = sp[0], sp[1]  #assigns values to each
+                #sometimes gives errors saying the index is out of range...not sure why...recommend deleting save file each time...will fix soon
+            random_generation_spn.append(final_weapon_name)
+            #print(final_weapon_name)    #only prints out weapon names
 
 def display_title_screen():
     os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
@@ -43,6 +116,10 @@ def display_new_game_screen():
     #asks player if they want to enter a custom seed or use a pregenerated random seed for their new game
     os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
 
+    open('random_weapons_supernatural.txt', 'w').close()    #clears all data
+    open('random_weapons_starwars.txt', 'w').close()        #clears all data
+    open('save,txt', 'w').close()
+
     seed_selection = """
     Enter a custom seed.  Alternatively, type 'random' for a random seed.  Enter 'exit' to go back to the main menu.
     """
@@ -65,6 +142,8 @@ def display_settings_screen():
     print(color_selection)
 
 def data_starwars():    #accesses data sets for star wars
+    starwars_openai_gen()
+    read_starwars_data_set_file()
     global place
     global weapon
     global weapon_name
@@ -74,7 +153,8 @@ def data_starwars():    #accesses data sets for star wars
     global piece_of_paper_name
     global enemy
     global enemy_name
-    weapon_name = random.choice(StarWarsDataSets.weapons)
+    #weapon_name = random.choice(StarWarsDataSets.weapons)      #will access from predefined data sets
+    weapon_name = random.choice(random_generation_starwars)     #will access from randomly generated lists
     place = random.choice(StarWarsDataSets.woods)   #randomly chooses values from specified list
     trash_can_name = random.choice(StarWarsDataSets.trash_can)
     piece_of_paper_name = random.choice(StarWarsDataSets.piece_of_paper)
@@ -91,6 +171,8 @@ def data_starwars():    #accesses data sets for star wars
         enemy = Fore.RED + enemy_name + Fore.RESET
 
 def data_supernatural():    #accesses data sets for supernatural
+    supernatural_openai_gen()
+    read_supernatural_data_set_file()
     global place
     global weapon
     global weapon_name
@@ -100,7 +182,7 @@ def data_supernatural():    #accesses data sets for supernatural
     global piece_of_paper_name
     global enemy
     global enemy_name
-    weapon_name = random.choice(SupernaturalDataSets.weapons)
+    weapon_name = random.choice(random_generation_spn)
     place = random.choice(SupernaturalDataSets.woods)   #randomly chooses values from specified list
     trash_can_name = random.choice(SupernaturalDataSets.trash_can)
     piece_of_paper_name = random.choice(SupernaturalDataSets.piece_of_paper)
@@ -116,7 +198,7 @@ def data_supernatural():    #accesses data sets for supernatural
         piece_of_paper = Fore.YELLOW + piece_of_paper_name + Fore.RESET
         enemy = Fore.RED + enemy_name + Fore.RESET
 
-def data_demo():
+def data_demo():    #accesses data set for traditional demo
     global place
     global weapon
     global weapon_name
@@ -312,9 +394,12 @@ def new_game_screen():
 flowchart = []  #the flowchart for the player's choices in the game...
 
 def start():
-    print("""       You are standing in the middle of the """ + place + """ at night.  
-    There is a full moon overhead casting a faint glow on the ground in front of you.  There are trees surrounding you in every direction and span far into the night.  However, there seems to be traces of a path to your right.  It doesn't look to have been walked on in a long time.""")
-    
+    print("""       
+        You are standing in the middle of the """ + place + """ at night.  
+        There is a full moon overhead casting a faint glow on the ground in front of you.  There are trees surrounding you in every direction and span far into the night.  
+        However, there seems to be traces of a path to your right.  It doesn't look to have been walked on in a long time.
+        You suddenly remember why you are here.  The people of """ + place + """ have requested your help in defeating a creature that has terrorized them for many years.  Its last known location was somewhere in these woods...""")
+    print("")
     flowchart.append("start")
 
     #stack = traceback.extract_stack()
@@ -337,10 +422,11 @@ def start():
             print('I do not understand that statement.')    #error control
 
 def startpath():
-    print("""       You walk along the path, careful to not trip on any rocks or limbs along the way.  You don't get very far before seeing an object lying on the ground, shining from the moonlight filtering through the trees.  You can't make out exactly what it is, though.""")
-    
+    print("")
+    print("""
+        You walk along the path, careful to not trip on any rocks or limbs along the way.  You don't get very far before seeing an object lying on the ground, shining from the moonlight filtering through the trees.  You can't make out exactly what it is, though.""")
     flowchart.append("startpath")
-    
+    print("")
     while True:
         choice = input()
         if choice in ("pick up object", "pick up the object", "look at object", "look at the object"):
@@ -356,9 +442,12 @@ def startpath():
             print('I do not understand that statement.') 
 
 def startpath_object():
-    print("     You pick up the object and notice that it is a " + weapon)
-    print("     The weapon is slightly dirty and seems to haven't been used in a long time.  However, it seems to be in good condition.")
-    
+    print("")
+    print("""    
+        You pick up the object and notice that it is a """ + weapon)
+    print("""
+        The weapon is slightly dirty and seems to haven't been used in a long time.  However, it seems to be in good condition.""")
+    print("")
     flowchart.append("startpath_object")
 
     global Inventory
@@ -366,7 +455,8 @@ def startpath_object():
         choice = input()
 
         if choice in ("take " + weapon_name , "take weapon", "take the weapon"):    #allows player to specifically type in weapon name or just 'weapon'
-            print("     You take the " + "\033[33m" +  weapon + "\033[39m" + " and hold it tightly in your hand.")  #ANSI codes implemented...change to yellow then back to white
+            print("""
+        You take the """ + weapon + """ and hold it tightly in your hand.""")  #ANSI codes implemented...change to yellow then back to white
             Inventory_Version_1.addToInventory(weapon_name)     #this adds the item to overall inventory list
             Inventory_Version_1.addToInventoryWeapons(weapon_name)  #adds item to inventory under 'Weapons' list
                 #NOTE: this is currently hardcoded...to effectively be randomly generated, this will need to change so that there is a list of preconceived items associated with their respective types
@@ -391,8 +481,10 @@ def startpath_object():
             print("I don't understand that statement.")
 
 def startpath_continue():
-     print("     You look around and see that the path still continues in front of you.  No other path is in sight and trees surround you.  The moonlight still filters through shining a faint light on the path ahead.")
-     
+     print("""
+        You look around and see that the path still continues in front of you.  No other path is in sight and trees surround you.  The moonlight still filters through shining
+        a faint light on the path ahead.""")
+     print("")
      flowchart.append("startpath_continue")
 
      global Inventory
@@ -411,8 +503,11 @@ def startpath_continue():
             print('I do not understand that statement.')
 
 def crossroads():
-    print("""       You continue to go along the path and eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.  The middle section of the crossroads is a wide circle with a """ + trash_can +""" sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
-    
+    print("")
+    print("""
+        You continue to go along the path and eventually reach the center of a crossroads.  There are 3 paths in front of you: one to the left, one to the right, and one that seems to continue from the path you are on currently.
+        The middle section of the crossroads is a wide circle with a """ + trash_can +""" sitting in the center.  There is a lamp post lighting the center of the crossroads.""")
+    print("")
     flowchart.append("crossroads")
 
     while True:
@@ -423,9 +518,12 @@ def crossroads():
         elif choice in ("look inside " + trash_can_name, "look inside the " + trash_can_name):
             print("     You look inside the " + trash_can + " and see there is a " + piece_of_paper + "  at the bottom")
         elif choice in ("get " + piece_of_paper_name, "get the " + piece_of_paper_name, "pick up " + piece_of_paper_name, "pick up the " + piece_of_paper_name):
-            print("     You pick up the " + piece_of_paper + " and read it." + 
-                  """It reads: Welcome to (INSERT GAME NAME HERE)!  In this game, you will find there are many paths to go on.  There is no right or wrong way to play this game.  While one path might lead to something incredible, 
-                  another could lead to your demise.  Be cautious.  There are several others in this world, but not all will be friendly.  Be prepared for anything.""")
+            print("""
+        You pick up the """ + piece_of_paper + """ and read it.  """ + 
+        """It reads: 
+            Welcome to Rovivrus!  In this game, you will find there are many paths to go on.  There is no right or wrong way to play this game.  While one path might lead to something incredible, 
+            another could lead to your demise.  Be cautious.  There are several others in this world, but not all will be friendly.  Be prepared for anything.
+        """)
         elif choice in ("go on left path", "go down left path"):
             crossroads_left()   #demo 1 playthrough...code others in phase 2
         elif choice in ("go on right path", "go down right path"):
@@ -443,8 +541,11 @@ def crossroads():
             print("I don't understand that statement.")
 
 def crossroads_left():
-    print("""       You go down the path to your left, leaving the crossroads behind you.  Eventually, the light from the crossroads becomes faint.  The path in front of you is almost invisible from the pitch black darkness all around.  Suddenly, a growling sound can be heard from in front of you, though you cannot see what is making the sound.""")
-    
+    print("")
+    print("""
+        You go down the path to your left, leaving the crossroads behind you.  Eventually, the light from the crossroads becomes faint.  The path in front of you is almost invisible from the pitch black darkness all around.
+        Suddenly, a growling sound can be heard from in front of you, though you cannot see what is making the sound.""")
+    print("")
     flowchart.append("crossroads_left")
 
     while True:
@@ -453,9 +554,11 @@ def crossroads_left():
         if choice in ("keep going forward", "go forward", "continue forward", "keep going"):
             crossroads_left1()
         elif choice in ("turn around", "turn back"):
-            print("     You are turned around with the growling still menacingly continuing behind you.")
+            print("""
+        You are turned around with the growling still menacingly continuing behind you.""")
         elif choice in ("go back to crossroads", "go to crossroads", "return to crossroads"):
-            print("""       You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
+            print("""
+        You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
             crossroads()
         elif choice in ("fight", "attack", "kill"):
             preattack_inventory_check()
@@ -470,8 +573,11 @@ def crossroads_left():
             print("I don't understand that statement.")
 
 def crossroads_left1():
-    print("""       You slowly move forward towards the growling which has gotten significantly louder and more menacing now.  After a few steps, you can start to make out what seems to be a """ + enemy + """ .  A pair of glowing eyes are faint, but seem to be staring right into your soul.  The creature's growling starts to hurt your ears as it increases in volume.""")
-
+    print("")
+    print("""
+        You slowly move forward towards the growling which has gotten significantly louder and more menacing now.  After a few steps, you can start to make out what seems to be a """ + enemy + """.
+        A pair of glowing eyes are faint, but seem to be staring right into your soul.  The creature's growling starts to hurt your ears as it increases in volume.""")
+    print("")
     flowchart.append("crossroads_left1")
 
     while True:
@@ -480,11 +586,13 @@ def crossroads_left1():
         if choice in ("keep going forward", "go forward", "continue forward", "keep going"):
             crossroads_left2()
         elif choice in ("turn around", "turn back"):
-            print("     You are turned around with the growling still menacingly continuing behind you.")
+            print("""
+        You are turned around with the growling still menacingly continuing behind you.""")
         elif choice in ("go back to crossroads", "go to crossroads", "return to crossroads"):
-            print("""       You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
+            print("""
+        You turn around and go back to the crossroads that you can barely make out in the dark from walking so far from it.  The growling continues behind you, but it eventually becomes faint.  Soon you are back at the crossroads.""")
             crossroads()
-        elif choice in ("fight", "attack", "kill"):
+        elif choice in ("attack", "fight", "attack the " + enemy_name, "fight the " + enemy_name):
             attack_wolf()
         elif choice == 'exit game':
             data.update({'checkpoint': 6})
@@ -497,8 +605,11 @@ def crossroads_left1():
             print("I don't understand that statement.")
 
 def crossroads_left2():
-    print("""       You continue to move forward towards the """ + enemy + """ which is still growling.  You only get three steps further before the creature suddenly lunges forward at you.  Fangs sink down into your right arm as the """ + enemy + """ bites down hard.  The pain causes you to scream out in pain.  Blood is now all over your arm and falling to the forest floor.  The """ + enemy + """ continues to hold his grip on your arm and shows no signs of letting go.""")
-
+    print("")
+    print("""
+        You continue to move forward towards the """ + enemy + """ which is still growling.  You only get three steps further before the creature suddenly lunges forward at you.  Fangs sink down into your right arm as the """
+       + enemy + """ bites down hard.  The pain causes you to scream out in pain.  Blood is now all over your arm and falling to the forest floor.  The """ + enemy + """ continues to hold his grip on your arm and shows no signs of letting go.""")
+    print("")
     flowchart.append("crossroads_left2")
 
     while True:
@@ -507,7 +618,8 @@ def crossroads_left2():
         if choice in ("attack", "fight", "attack the " + enemy_name, "fight the " + enemy_name):
             attack_wolf()
         elif choice in ("run away", "run", "leave"):
-            print("You try to get away from the " + enemy + ", but it is futile.  It continues to bite down even harder than before.  Not a few moments later, your vision starts to deteriorate and you fall into a dark abyss of nothingness...")
+            print("""
+        You try to get away from the """ + enemy + ", but it is futile.  It continues to bite down even harder than before.  Not a few moments later, your vision starts to deteriorate and you fall into a dark abyss of nothingness...")
             death()
         elif choice == 'exit game':
             data.update({'checkpoint': 7})
@@ -520,10 +632,11 @@ def crossroads_left2():
             print("I don't understand that statement.")
 
 def death():
+    print("")
     open('save.txt', 'w').close()   #clears all saved data from save file upon death of player
     print("You died...")
     print("Would you like to return to the main menu?  If not, the game will close.")
-
+    print("")
     while True:
         choice = input()
 
@@ -558,8 +671,10 @@ def preattack_inventory_check():
             attack_wolf()
 
 def attack_wolf():
-    print("     What do you want to fight with?")   #allows player to choose a weapon to fight with
-    print("     Current weapons avaiable to use:")   #retrieves avaiable weapons from inventory player currently has
+    print("""
+        What do you want to fight with?""")   #allows player to choose a weapon to fight with
+    print("""
+        Current weapons avaiable to use:""")   #retrieves avaiable weapons from inventory player currently has
     Inventory_Version_1.showWeapons()
 
     flowchart.append("attack_wolf")
@@ -568,9 +683,34 @@ def attack_wolf():
         choice = input()
         
         if choice in Inventory_Version_1.InventoryWeapons:  #read player input and match string value to inventory weapons available
-            print("You use the " + choice + " to attack the " + enemy + "...")
+            print("""
+            You use the """ + choice + """ to attack the """ + enemy + """ and cause a deep gash on its right side.  Shrieking in pain and full of rage, it lunges towards you with viciousness.""")
+            attack_wolf2()
         else:
             print("I don't understand that statement.")
+
+def attack_wolf2():
+    print("     Do you want to fight or flee?")
+
+    while True:
+        choice = input()
+
+        if choice in ("fight"):
+            print("""
+            You attack the """ + enemy + """ again, this time using all your strength to cause a devastating blow, knocking the """ + enemy + """ to the ground.  It attempts to get up to fight again, but you finally finish it off.""")
+            win()
+        elif choice in ("flee"):
+            print("""
+            You try to run away from the """ + enemy + """ and you are almost to the end of the path where the crossroads begins when a sudden force knocks you down.  You try to get back up, but the """ + enemy + """has you pinned down.
+            Pain rushes through your body as it digs its claws into you.  You are completely helpess...""")
+            death()
+        else:
+            print("I don't understand that statement.")
+
+def win():
+    print("")
+    print("""
+        Congratulations!  You have fought the """ + enemy + " and lived to tell the tale.  Because of your actions, the people of " + place + " can now live in peace.")
 
 def crossroads_left3():
     print("yay")
