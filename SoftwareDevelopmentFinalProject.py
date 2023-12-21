@@ -118,7 +118,7 @@ def display_new_game_screen():
 
     open('random_weapons_supernatural.txt', 'w').close()    #clears all data
     open('random_weapons_starwars.txt', 'w').close()        #clears all data
-    open('save,txt', 'w').close()
+    open('save.txt', 'w').close()
 
     seed_selection = """
     Enter a custom seed.  Alternatively, type 'random' for a random seed.  Enter 'exit' to go back to the main menu.
