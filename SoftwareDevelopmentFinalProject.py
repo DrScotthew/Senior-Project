@@ -23,11 +23,33 @@ from openai import OpenAI   #uses openai
 import config
 import time
 
-client = OpenAI(                   
-  organization=openai.api_key,     
-)                                  
+global isUsingOpenAI
 
-openai.api_key = config.api_key     #sets api key      
+client = OpenAI(
+  organization=openai.api_key,
+)
+
+def random_generation_ask():
+    print("Would you like to use the OpenAI random generation? (see README for more info...)")    #asks user if they want to use OpenAI random generation
+    choice = input()
+    global isUsingOpenAI
+    if choice in ("yes", "Y", "y"):
+        print("Do you have your own API key to use?")   #asks user if they have their own API key to use
+        choice2=input()
+        if choice2 in ("yes", "Y", "y"):
+            print("Please type in the API key you would like to use: ")     #asks user to put in their API key to use
+            isUsingOpenAI = True
+            user_api_key = input()
+            openai.api_key = user_api_key      #sets api key to what user put in...
+            new_game_screen()
+        else:
+            print("The game will use preconfigured data sets...")     #will use the prechosen OpenAI key so user can use OpenAI random generation still...
+            isUsingOpenAI = False
+            new_game_screen()
+    else:
+        print("The game will use preconfigured data sets...")   #uses the preconfigured data sets...
+        isUsingOpenAI=False
+        new_game_screen()
 
 random_generation_spn_weapon_names = []      #creates spn array elements for weapon names
 random_generation_starwars_weapon_names = []     #creates star wars array elements for weapon names
@@ -114,10 +136,9 @@ def supernatural_openai_gen():   #all random generation for supernatural
 
 def starwars_openai_gen():
     starwars_prompt = ["give a random weapon name from 'Star Wars' that is not listed here: {}".format(random_generation_starwars_weapon_names) + "\n\n"]
-    
     response = openai.completions.create(
     model="text-davinci-003",     #using davinci003
-    prompt=starwars_prompt,  #asks openai to give a weapon name from 'Star Wars'
+    prompt=starwars_prompt,     #asks openai to give a weapon name from 'Star Wars'
     temperature=0.7,
     frequency_penalty=0,
     presence_penalty=0,
@@ -134,7 +155,7 @@ def starwars_openai_gen():
     starwars_prompt2=["give a one sentence description of the weapon from 'Supernatural' called " + starwars_weapon + "describing what it looks like and its function.  Do not use the phrase '" + starwars_weapon + "' in your description." +"\n\n"]
     response = openai.completions.create(
         model="text-davinci-003",     #using davinci003
-        prompt=starwars_prompt2,  #asks openai to give a description from previously used name from 'Supernatural'
+        prompt=starwars_prompt2,    #asks openai to give a description from previously used name from 'Supernatural'
         temperature=0.7,
         frequency_penalty=0,
         presence_penalty=0,
@@ -199,7 +220,6 @@ def display_settings_screen():
     print(color_selection)
 
 def data_starwars():    #accesses data sets for star wars
-    #starwars_openai_gen()      #performs openai generation for weapon names/descriptions
     global place
     global weapon
     global weapon_name
@@ -210,14 +230,22 @@ def data_starwars():    #accesses data sets for star wars
     global piece_of_paper_name
     global enemy
     global enemy_name
-    weapon_name = random.choice(StarWarsDataSets.weapons)      #will access from predefined data sets
-    #weapon_name = random.choice(random_generation_starwars_weapon_names)     #will access from randomly generated lists
-    #weapon_description = random.choice(random_generation_starwars_weapon_descriptions)
-    weapon_description = "test description of star wars weapon..."
-    place = random.choice(StarWarsDataSets.woods)   #randomly chooses values from specified list
-    trash_can_name = random.choice(StarWarsDataSets.trash_can)
-    piece_of_paper_name = random.choice(StarWarsDataSets.piece_of_paper)
-    enemy_name = random.choice(StarWarsDataSets.enemy)
+
+    if isUsingOpenAI:
+        starwars_openai_gen()      #performs openai generation for weapon names/descriptions
+        weapon_name = random.choice(random_generation_starwars_weapon_names)     #will access from randomly generated lists
+        weapon_description = random.choice(random_generation_starwars_weapon_descriptions)
+        place = random.choice(StarWarsDataSets.woods)   #randomly chooses values from specified list
+        trash_can_name = random.choice(StarWarsDataSets.trash_can)
+        piece_of_paper_name = random.choice(StarWarsDataSets.piece_of_paper)
+        enemy_name = random.choice(StarWarsDataSets.enemy)
+    else:
+        weapon_name = random.choice(StarWarsDataSets.weapons)      #will access from predefined data sets
+        weapon_description = "test description of star wars weapon..."
+        place = random.choice(StarWarsDataSets.woods)   #randomly chooses values from specified list
+        trash_can_name = random.choice(StarWarsDataSets.trash_can)
+        piece_of_paper_name = random.choice(StarWarsDataSets.piece_of_paper)
+        enemy_name = random.choice(StarWarsDataSets.enemy)
     try: 
         weapon = color_choice + weapon_name + Fore.RESET
         trash_can = color_choice + trash_can_name + Fore.RESET
@@ -230,7 +258,6 @@ def data_starwars():    #accesses data sets for star wars
         enemy = Fore.RED + enemy_name + Fore.RESET
 
 def data_supernatural():    #accesses data sets for supernatural
-    supernatural_openai_gen()   #performs openai generation for weapon names/descriptions
     global place
     global weapon
     global weapon_name
@@ -241,12 +268,22 @@ def data_supernatural():    #accesses data sets for supernatural
     global piece_of_paper_name
     global enemy
     global enemy_name
-    weapon_name = random.choice(random_generation_spn_weapon_names)     #randomly chooses weapon name from openai list...
-    weapon_description = random.choice(random_generation_spn_weapon_descriptions)
-    place = random.choice(SupernaturalDataSets.woods)   #randomly chooses values from specified list
-    trash_can_name = random.choice(SupernaturalDataSets.trash_can)
-    piece_of_paper_name = random.choice(SupernaturalDataSets.piece_of_paper)
-    enemy_name = random.choice(SupernaturalDataSets.enemy)
+
+    if isUsingOpenAI:
+        supernatural_openai_gen()      #performs openai generation for weapon names/descriptions
+        weapon_name = random.choice(random_generation_spn_weapon_names)     #will access from randomly generated lists
+        weapon_description = random.choice(random_generation_spn_weapon_descriptions)
+        place = random.choice(SupernaturalDataSets.woods)   #randomly chooses values from specified list
+        trash_can_name = random.choice(SupernaturalDataSets.trash_can)
+        piece_of_paper_name = random.choice(SupernaturalDataSets.piece_of_paper)
+        enemy_name = random.choice(SupernaturalDataSets.enemy)
+    else:
+        weapon_name = random.choice(SupernaturalDataSets.weapons)      #will access from predefined data sets
+        weapon_description = "test description of supernatural weapon..."
+        place = random.choice(SupernaturalDataSets.woods)   #randomly chooses values from specified list
+        trash_can_name = random.choice(SupernaturalDataSets.trash_can)
+        piece_of_paper_name = random.choice(SupernaturalDataSets.piece_of_paper)
+        enemy_name = random.choice(SupernaturalDataSets.enemy)
     try: 
         weapon = color_choice + weapon_name + Fore.RESET
         trash_can = color_choice + trash_can_name + Fore.RESET
@@ -259,7 +296,6 @@ def data_supernatural():    #accesses data sets for supernatural
         enemy = Fore.RED + enemy_name + Fore.RESET
 
 def data_demo():    #accesses data set for traditional demo
-    demo_openai_gen()       #performs openai generation for weapon names/descriptions
     global place
     global weapon
     global weapon_name
@@ -270,13 +306,21 @@ def data_demo():    #accesses data set for traditional demo
     global piece_of_paper_name
     global enemy
     global enemy_name
-    #weapon_name = random.choice(DemoDataSets.weapons)      #will use preset weapon names...
-    weapon_name = random.choice(random_generation_demo_weapon_names)
-    weapon_description = random.choice(random_generation_demo_weapon_descriptions)
-    place = random.choice(DemoDataSets.woods)   #randomly chooses values from specified list
-    trash_can_name = random.choice(DemoDataSets.trash_can)
-    piece_of_paper_name = random.choice(DemoDataSets.piece_of_paper)
-    enemy_name = random.choice(DemoDataSets.enemy)
+    if isUsingOpenAI:
+        demo_openai_gen()      #performs openai generation for weapon names/descriptions
+        weapon_name = random.choice(random_generation_demo_weapon_names)     #will access from randomly generated lists
+        weapon_description = random.choice(random_generation_demo_weapon_descriptions)
+        place = random.choice(DemoDataSets.woods)   #randomly chooses values from specified list
+        trash_can_name = random.choice(DemoDataSets.trash_can)
+        piece_of_paper_name = random.choice(DemoDataSets.piece_of_paper)
+        enemy_name = random.choice(DemoDataSets.enemy)
+    else:
+        weapon_name = random.choice(DemoDataSets.weapons)      #will access from predefined data sets
+        weapon_description = "test description of demo weapon..."
+        place = random.choice(DemoDataSets.woods)   #randomly chooses values from specified list
+        trash_can_name = random.choice(DemoDataSets.trash_can)
+        piece_of_paper_name = random.choice(DemoDataSets.piece_of_paper)
+        enemy_name = random.choice(DemoDataSets.enemy)
     try: 
         weapon = color_choice + weapon_name + Fore.RESET
         trash_can = color_choice + trash_can_name + Fore.RESET
@@ -332,6 +376,8 @@ def settings_screen():
             else:
                 print("Invalid input.  Please choose a highlight color from the list.")
      
+
+
 color_choice = [Fore.BLUE, Fore.YELLOW, Fore.MAGENTA , Fore.RED, Fore.GREEN]
 
 setting = [DemoDataSets.woods, StarWarsDataSets.woods, SupernaturalDataSets.woods]
@@ -398,7 +444,7 @@ def main_menu():
         
         if choice == '1':
             # Allows player to either a) enter a custom seed or b) use a pregenerated random seed in order to create the world and start the game
-            new_game_screen()
+            random_generation_ask()     #will ask player if they want to use the OpenAI random generation or preconfigured data sets...
             
         elif choice == '2':
             # Loads last saved game
@@ -416,6 +462,26 @@ def main_menu():
         else:
             # Error control...
             print("Invalid choice. Please select a valid option (1/2/3/4).")
+
+#def random_generation_ask():
+#    print("Would you like to use the OpenAI random generation?")
+#    choice = input()
+
+#    if choice in ("yes", "Y", "y"):
+#        print("Do you have your own API key to use?")
+#        choice2=input()
+#        if choice2 in ("yes", "Y", "y"):
+#            print("Please type in the API key you would like to use: ")
+#            isUsingOpenAI = True
+#            open_api_key = input()      #sets api key to what user put in...
+#            new_game_screen()
+#        else:
+#            openai.api_key = config.api_key     #sets api key to example api key...
+#            isUsingOpenAI = True
+#            new_game_screen()
+#    else:
+#        print("The game will use preconfigured data sets...")
+#        new_game_screen()
 
 def new_game_screen():
     display_new_game_screen()
