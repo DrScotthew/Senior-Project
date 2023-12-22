@@ -1,1 +1,0 @@
-{"checkpoint": 3, "complete inventory": ["Z6 Riot Control Baton\n"], "weapons": ["Z6 Riot Control Baton\n"], "armor": [], "ammo": [], "health items": [], "currently equipped": [], "money": [], "highlight_color": "\u001b[33m", "setting": "star wars"}

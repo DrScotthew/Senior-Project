@@ -2,7 +2,9 @@ from ast import Try, TryStar
 from cgitb import lookup
 from http.server import ThreadingHTTPServer
 import os
+from pickle import FALSE
 import string
+from unittest import skip
 from InventoryVersion1 import Inventory_Version_1 #import inventory management inventory_version_1.py
 import colorama
 #Colorama is a way to highlight text color in the output console
@@ -19,75 +21,130 @@ import DemoDataSets
 import openai
 from openai import OpenAI   #uses openai
 import config
+import time
 
-client = OpenAI(
-  organization=openai.api_key,
-)
+client = OpenAI(                   
+  organization=openai.api_key,     
+)                                  
 
-openai.api_key = config.api_key     #sets api key
-random_generation_spn = []      #creates spn array elements
-random_generation_starwars = []     #creates star wars array elements
+openai.api_key = config.api_key     #sets api key      
 
+random_generation_spn_weapon_names = []      #creates spn array elements for weapon names
+random_generation_starwars_weapon_names = []     #creates star wars array elements for weapon names
+random_generation_demo_weapon_names = []        #creates demo array elements for weapon names
+random_generation_spn_weapon_descriptions = []      #creates spn array elements for weapon descriptions...array index values will match weapon array index values each time as both are added at same time...
+random_generation_starwars_weapon_descriptions = []     #star wars weapon descriptions array
+random_generation_demo_weapon_descriptions = []         #demo weapon descriptions array
+
+def demo_openai_gen():
+    demo_prompt = ["give the name of a random weapon that is not listed here: {}".format(random_generation_demo_weapon_names) + "\n\n"]
+        #will ask for generic weapons for demo mode...each weapon must be unique...
+    response = openai.completions.create(
+        model="text-davinci-003",     #using davinci003
+        prompt=demo_prompt,  #asks openai to give a weapon name from 'Supernatural'
+        temperature=0.7,
+        frequency_penalty=0,
+        presence_penalty=0,
+        max_tokens=10
+    )
+    demo_weapon = response.choices[0].text;
+    random_generation_demo_weapon_names.append(demo_weapon)      #adds weapon name to array...
+    L = [demo_weapon]
+    demo_file = open('random_weapons_demo.txt', 'w')     #saves each weapon name into new .txt file
+    demo_file.writelines(L)
+    demo_file.close
+    
+    demo_file = open('random_weapons_demo.txt', 'r')
+    demo_prompt2=["give a one sentence description of " + demo_weapon + "describing what it looks like and its function.  Do not use the phrase '" + demo_weapon + "' in your description." +"\n\n"]
+        #asks openai for description of demo weapon(s)...
+    response = openai.completions.create(
+        model="text-davinci-003",
+        prompt=demo_prompt2,  #asks openai to give a description from previously used name for demo weapon
+        temperature=0.7,
+        frequency_penalty=0,
+        presence_penalty=0,
+        max_tokens=50
+    )
+    demo_weapon_description = response.choices[0].text;
+    random_generation_demo_weapon_descriptions.append(demo_weapon_description)       #adds weapon description to array...
+    final_weapon_description_save = open('random_weapons_demo_descriptions.txt', 'w')
+    final_weapon_description_save.writelines(demo_weapon_description)
+    final_weapon_description_save.close
 
 def supernatural_openai_gen():   #all random generation for supernatural
-    supernatural_prompt = ["give 5 random weapon names from the tv show 'Supernatural' that are each unique" + "\n\n"]
-    
+    supernatural_prompt = ["give a random weapon name from the tv show 'Supernatural' that is not listed here: {}".format(random_generation_spn_weapon_names) + "\n\n"]
+        #asks openai to give one weapon name each time...this is to prevent errors when ai gives list of items and program is unable to accurately prepare to read txt file in different formats...
+        #also asks for openai to only give a weapon name that is unique from weapon names already stored in array...
     response = openai.completions.create(
         model="text-davinci-003",     #using davinci003
         prompt=supernatural_prompt,  #asks openai to give a weapon name from 'Supernatural'
         temperature=0.7,
         frequency_penalty=0,
         presence_penalty=0,
-        max_tokens=50
+        max_tokens=10
     )
-    supernatural_weapon = response.choices[0].text;L = [supernatural_weapon]
+    supernatural_weapon = response.choices[0].text;
+    random_generation_spn_weapon_names.append(supernatural_weapon)      #adds weapon name to array...
+    L = [supernatural_weapon]
     spn_file = open('random_weapons_supernatural.txt', 'w')     #saves each weapon name into new .txt file
     spn_file.writelines(L)
     spn_file.close
-
+    
     spn_file = open('random_weapons_supernatural.txt', 'r')
+    supernatural_prompt2=["give a one sentence description of the weapon from 'Supernatural' called " + supernatural_weapon + "describing what it looks like and its function.  Do not use the phrase '" + supernatural_weapon + "' in your description." +"\n\n"]
+        #this will ask the openai to give a description for the weapon stored in supernatural_weapon variable without mentioning the weapon's name...this is to make the text in the game less redundant and awkward...
+        #need to check each time if program has already given a description for that weapon...? no since it will be called each time weapon is created
+        #will store descriptions in save file...
+        #will access said save file when player wants to see weapon descriptions from inventory screen...
+            #e.g. player opens inventory, selects weapon, program displays weapon description again for player before asking if thats the weapon they want to use...
+            #program will know which description to give based on array index value...since program gives description at same time as weapon name, the index values will match each time...
+    response = openai.completions.create(
+        model="text-davinci-003",     #using davinci003
+        prompt=supernatural_prompt2,  #asks openai to give a description from previously used name from 'Supernatural'
+        temperature=0.7,
+        frequency_penalty=0,
+        presence_penalty=0,
+        max_tokens=50
+    )
+    supernatural_weapon_description = response.choices[0].text;
+    random_generation_spn_weapon_descriptions.append(supernatural_weapon_description)       #adds weapon description to array...
+    final_weapon_description_save = open('random_weapons_supernatural_descriptions.txt', 'w')
+    final_weapon_description_save.writelines(supernatural_weapon_description)
+    final_weapon_description_save.close
 
 def starwars_openai_gen():
-    starwars_prompt = ["give 5 random weapon names from 'Star Wars' that are each unique" + "\n\n"]
+    starwars_prompt = ["give a random weapon name from 'Star Wars' that is not listed here: {}".format(random_generation_starwars_weapon_names) + "\n\n"]
     
     response = openai.completions.create(
     model="text-davinci-003",     #using davinci003
-    prompt=starwars_prompt,  #asks openai to give a weapon name from 'Supernatural'
+    prompt=starwars_prompt,  #asks openai to give a weapon name from 'Star Wars'
     temperature=0.7,
     frequency_penalty=0,
     presence_penalty=0,
     max_tokens=50
     )
     starwars_weapon = response.choices[0].text;
+    random_generation_starwars_weapon_names.append(starwars_weapon)
     L1 = [starwars_weapon]
     starwars_file = open('random_weapons_starwars.txt', 'w')
     starwars_file.writelines(L1)
     starwars_file.close
 
     starwars_file = open('random_weapons_starwars.txt', 'r')
-
-def read_starwars_data_set_file():
-    starwars_openai_gen()
-    starwars_file = open('random_weapons_starwars.txt', 'r')
-    with starwars_file as f:     #reads from new supernatural random generation .txt file
-        lines = f.readlines()   #reads each line
-        for x in lines:
-            sp = x.split(". ")  #splits each line between list part and weapon names
-            bad_part, final_weapon_name = sp[0], sp[1]  #assigns values to each
-                #sometimes gives errors saying the index is out of range...not sure why...recommend deleting save file each time...will fix soon
-            random_generation_starwars.append(final_weapon_name)
-            #print(final_weapon_name)    #only prints out weapon names
-
-def read_supernatural_data_set_file():
-    spn_file = open('random_weapons_supernatural.txt', 'r')
-    with spn_file as f:     #reads from new supernatural random generation .txt file
-        lines = f.readlines()   #reads each line
-        for x in lines:
-            sp = x.split(". ")  #splits each line between list part and weapon names
-            bad_part, final_weapon_name = sp[0], sp[1]  #assigns values to each
-                #sometimes gives errors saying the index is out of range...not sure why...recommend deleting save file each time...will fix soon
-            random_generation_spn.append(final_weapon_name)
-            #print(final_weapon_name)    #only prints out weapon names
+    starwars_prompt2=["give a one sentence description of the weapon from 'Supernatural' called " + starwars_weapon + "describing what it looks like and its function.  Do not use the phrase '" + starwars_weapon + "' in your description." +"\n\n"]
+    response = openai.completions.create(
+        model="text-davinci-003",     #using davinci003
+        prompt=starwars_prompt2,  #asks openai to give a description from previously used name from 'Supernatural'
+        temperature=0.7,
+        frequency_penalty=0,
+        presence_penalty=0,
+        max_tokens=50
+    )
+    starwars_weapon_description = response.choices[0].text;
+    random_generation_starwars_weapon_descriptions.append(starwars_weapon_description)       #adds weapon description to array...
+    final_weapon_description_save = open('random_weapons_supernatural_descriptions.txt', 'w')
+    final_weapon_description_save.writelines(starwars_weapon_description)
+    final_weapon_description_save.close
 
 def display_title_screen():
     os.system("clear" if os.name == "posix" else "cls")  # Clear the screen
@@ -142,19 +199,21 @@ def display_settings_screen():
     print(color_selection)
 
 def data_starwars():    #accesses data sets for star wars
-    starwars_openai_gen()
-    read_starwars_data_set_file()
+    #starwars_openai_gen()      #performs openai generation for weapon names/descriptions
     global place
     global weapon
     global weapon_name
+    global weapon_description
     global trash_can
     global trash_can_name
     global piece_of_paper
     global piece_of_paper_name
     global enemy
     global enemy_name
-    #weapon_name = random.choice(StarWarsDataSets.weapons)      #will access from predefined data sets
-    weapon_name = random.choice(random_generation_starwars)     #will access from randomly generated lists
+    weapon_name = random.choice(StarWarsDataSets.weapons)      #will access from predefined data sets
+    #weapon_name = random.choice(random_generation_starwars_weapon_names)     #will access from randomly generated lists
+    #weapon_description = random.choice(random_generation_starwars_weapon_descriptions)
+    weapon_description = "test description of star wars weapon..."
     place = random.choice(StarWarsDataSets.woods)   #randomly chooses values from specified list
     trash_can_name = random.choice(StarWarsDataSets.trash_can)
     piece_of_paper_name = random.choice(StarWarsDataSets.piece_of_paper)
@@ -171,18 +230,19 @@ def data_starwars():    #accesses data sets for star wars
         enemy = Fore.RED + enemy_name + Fore.RESET
 
 def data_supernatural():    #accesses data sets for supernatural
-    supernatural_openai_gen()
-    read_supernatural_data_set_file()
+    supernatural_openai_gen()   #performs openai generation for weapon names/descriptions
     global place
     global weapon
     global weapon_name
+    global weapon_description
     global trash_can
     global trash_can_name
     global piece_of_paper
     global piece_of_paper_name
     global enemy
     global enemy_name
-    weapon_name = random.choice(random_generation_spn)
+    weapon_name = random.choice(random_generation_spn_weapon_names)     #randomly chooses weapon name from openai list...
+    weapon_description = random.choice(random_generation_spn_weapon_descriptions)
     place = random.choice(SupernaturalDataSets.woods)   #randomly chooses values from specified list
     trash_can_name = random.choice(SupernaturalDataSets.trash_can)
     piece_of_paper_name = random.choice(SupernaturalDataSets.piece_of_paper)
@@ -199,16 +259,20 @@ def data_supernatural():    #accesses data sets for supernatural
         enemy = Fore.RED + enemy_name + Fore.RESET
 
 def data_demo():    #accesses data set for traditional demo
+    demo_openai_gen()       #performs openai generation for weapon names/descriptions
     global place
     global weapon
     global weapon_name
+    global weapon_description
     global trash_can
     global trash_can_name
     global piece_of_paper
     global piece_of_paper_name
     global enemy
     global enemy_name
-    weapon_name = random.choice(DemoDataSets.weapons)
+    #weapon_name = random.choice(DemoDataSets.weapons)      #will use preset weapon names...
+    weapon_name = random.choice(random_generation_demo_weapon_names)
+    weapon_description = random.choice(random_generation_demo_weapon_descriptions)
     place = random.choice(DemoDataSets.woods)   #randomly chooses values from specified list
     trash_can_name = random.choice(DemoDataSets.trash_can)
     piece_of_paper_name = random.choice(DemoDataSets.piece_of_paper)
@@ -363,6 +427,7 @@ def new_game_screen():
             #Will generate a random seed for the world the player will be in...however, this is currently for the demo
             print("Generating random seed...")
             print("Loading...")
+            Inventory_Version_1.isDemo=True
             data.update({'setting': 'demo'})    #updates saved selection of data set used
             Inventory_Version_1.Inventory.clear     #clears inventory data for new game
             data_demo()     #will assign demo data for wold generation
@@ -371,6 +436,7 @@ def new_game_screen():
         elif choice == 'star wars':
             print("Generating a Star Wars themed world...")
             print("Loading...")
+            Inventory_Version_1.isStarWars=True
             data.update({'setting': 'star wars'})
             Inventory_Version_1.Inventory.clear
             data_starwars()     #will assign star wars data sets for wold generation
@@ -379,6 +445,7 @@ def new_game_screen():
         elif choice == 'supernatural':
             print("Generating a Supernatural themed world...")
             print("Loading...")
+            Inventory_Version_1.isSupernatural=True
             data.update({'setting': 'supernatural'})
             Inventory_Version_1.Inventory.clear
             data_supernatural()     #will assign supernatural data sets for world generation
@@ -393,6 +460,36 @@ def new_game_screen():
 
 flowchart = []  #the flowchart for the player's choices in the game...
 
+def weapon_inventory_descriptions():
+    stack = traceback.extract_stack()
+    filename, codeline, funcName, text = stack[-2]
+    checkpoints = {'start': start, 'startpath':startpath, "startpath_object":startpath_object, "startpath_continue":startpath_continue, "crossroads":crossroads, "crossroads_left":crossroads_left, "crossroads_left1":crossroads_left1, "crossroads_left2":crossroads_left2}
+    last_checkpoint = flowchart[-1]     #gets last checkpoint in player's flowchart
+    if not Inventory_Version_1.InventoryWeapons:    #checks if player has weapons...if not, tells them they don't have any weapons and takes them back...
+        checkpoints[last_checkpoint]()  #returns player to previous checkpoint...
+    else:  
+        print("Which weapon do you want to look at?")
+        while True:
+            choice2 = input()
+            if choice2=="{}".format(Inventory_Version_1.weapon_description_index) and Inventory_Version_1.isStarWars:      #and Inventory_Version_1.isStarWars
+                print("Description: ")      #how to make program look at descriptions for weapon...how to make it know if using spn data sets or star wars data sets...
+                #print(random_generation_starwars_weapon_descriptions[Inventory_Version_1.weapon_description_index])
+                print(weapon_description)
+                checkpoints[last_checkpoint]()      #returns player to last checkpoint...
+            elif choice2=="{}".format(Inventory_Version_1.weapon_description_index) and Inventory_Version_1.isSupernatural:
+                print("Description: ")      #how to make program look at descriptions for weapon...how to make it know if using spn data sets or star wars data sets...
+                print(random_generation_spn_weapon_descriptions[Inventory_Version_1.weapon_description_index])
+                checkpoints[last_checkpoint]()      #returns player to last checkpoint...
+            elif choice2=="{}".format(Inventory_Version_1.weapon_description_index) and Inventory_Version_1.isDemo:
+                print("Description: ")      #how to make program look at descriptions for weapon...how to make it know if using spn data sets or star wars data sets...
+                print(random_generation_demo_weapon_descriptions[Inventory_Version_1.weapon_description_index])
+                checkpoints[last_checkpoint]()      #returns player to last checkpoint...
+            elif choice2=="exit":
+                checkpoints[last_checkpoint]()
+            else:
+                print("I don't understand that statement.  Please enter the number associated with the weapon you want to look at.")
+
+
 def start():
     print("""       
         You are standing in the middle of the """ + place + """ at night.  
@@ -401,11 +498,6 @@ def start():
         You suddenly remember why you are here.  The people of """ + place + """ have requested your help in defeating a creature that has terrorized them for many years.  Its last known location was somewhere in these woods...""")
     print("")
     flowchart.append("start")
-
-    #stack = traceback.extract_stack()
-    #filename, codeline, funcName, text = stack[-2]
-
-    #print(funcName)
 
     while True:     #Loop continuously
         choice = input()   #Get the input
@@ -418,6 +510,7 @@ def start():
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()     #Will access Inventory_Version_1 to show inventory options
+            weapon_inventory_descriptions()
         else:
             print('I do not understand that statement.')    #error control
 
@@ -438,6 +531,7 @@ def startpath():
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
+            weapon_inventory_descriptions()
         else:
             print('I do not understand that statement.') 
 
@@ -445,8 +539,7 @@ def startpath_object():
     print("")
     print("""    
         You pick up the object and notice that it is a """ + weapon)
-    print("""
-        The weapon is slightly dirty and seems to haven't been used in a long time.  However, it seems to be in good condition.""")
+    print(weapon_description)
     print("")
     flowchart.append("startpath_object")
 
@@ -477,6 +570,7 @@ def startpath_object():
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
+            weapon_inventory_descriptions()
         else:
             print("I don't understand that statement.")
 
@@ -499,6 +593,7 @@ def startpath_continue():
             print("Saving the game...")
         elif choice == 'inventory':
             Inventory_Version_1.main1()
+            weapon_inventory_descriptions()
         else:
             print('I do not understand that statement.')
 
@@ -662,9 +757,9 @@ def preattack_inventory_check():
             print(last_checkpoint)
             #methods = {last_checkpoint: start or startpath or crossroads_left}
             #method_name = 'start' # set by the command line options
+            checkpoints[last_checkpoint]()      #automatically sends player back to checkpoint...
             if funcName in checkpoints:      #compares checkpoint name to function names
                 checkpoints[last_checkpoint]()      #automatically sends player back to checkpoint...
-                #last_checkpoint()
             else:
                 raise Exception("Method %s not implemented" % last_checkpoint)
         else:
@@ -702,7 +797,7 @@ def attack_wolf2():
         elif choice in ("flee"):
             print("""
             You try to run away from the """ + enemy + """ and you are almost to the end of the path where the crossroads begins when a sudden force knocks you down.  You try to get back up, but the """ + enemy + """has you pinned down.
-            Pain rushes through your body as it digs its claws into you.  You are completely helpess...""")
+            Pain rushes through your body as it digs its claws into you.  You are completely helpless...""")
             death()
         else:
             print("I don't understand that statement.")

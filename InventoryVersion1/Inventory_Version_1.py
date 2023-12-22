@@ -2,7 +2,9 @@
 #Full game will include lists of possible items that may appear in game when randomly generating seeds
 from asyncio.windows_events import NULL
 
-
+isStarWars=False
+isSupernatural=False
+isDemo=False
 Inventory=[]
 InventoryWeapons=[]
 InventoryArmor=[]
@@ -10,6 +12,9 @@ InventoryAmmo=[]
 InventoryHealthItems=[]
 InventoryCurrentlyEquipped=[]
 InventoryMoney=[]
+
+weapon_description_index=0
+index = []
 
 def addToInventory(item):
     Inventory.append(item)
@@ -22,8 +27,11 @@ def showCompleteInventory():
         print(i)
 
 def showWeapons():
-    for i in InventoryWeapons:
-        print(i)
+    weapon_description_index=0
+    for i in InventoryWeapons:  #have it print out with #s on each line so user can just type in a number to select the weapon they want...
+                                #program will then use that number as what to put in for finding the weapon in that specific array index...
+        print("{}. ".format(weapon_description_index) + i)      #prints out weapon names in list format...
+        weapon_description_index+1      #increases by 1 each time...will be used to determine array index value to determine which description to output...
 
 def showArmor():
     for i in InventoryArmor:
